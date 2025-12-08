@@ -1,0 +1,47 @@
+@inject CombinationOfSchoolCode.Shared.GameEngine Engine
+@using CombinationOfSchoolCode.Shared
+@code {
+    [Parameter] public EventCallback OnExit { get; set; }
+    char[,] board = new char[3, 3];
+    string? msg; bool over;
+    protected override void OnInitialized() => Reset();
+    void Move(int r, int c)
+    {
+        if (board[r, c] != ' ' || over) return;
+        board[r, c] = 'X';
+        if (Win('X')) { over = true; Engine.AddWin(); msg="You win!"; return;}
+        if (Full()) { over=true; msg = "Draw!"; return;}
+        var (r2,c2) = TicTacToeAI.Move(board); board[r2,c2]='O';
+        if (Win('O')) { over=true; Engine.AddLoss(); msg="AI wins!"; return;}
+        if (Full()) { over=true; msg = "Draw!"; }
+    }
+    bool Full() { for (int i=0;i<3;i++) for(int j=0;j<3;j++) if (board[i,j]==' ') return false; return true; }
+    bool Win(char p)
+    {
+        for (int i=0;i<3;i++)
+            if ((board[i,0]==p && board[i,1]==p && board[i,2]==p) ||
+                (board[0,i]==p && board[1,i]==p && board[2,i]==p))
+                return true;
+        return (board[0,0]==p && board[1,1]==p && board[2,2]==p) || (board[2,0]==p && board[1,1]==p && board[0,2]==p);
+    }
+    void Reset() { for (int i=0; i<3; i++) for (int j=0; j<3; j++) board[i,j]=' '; over=false; msg=null; }
+}
+<h3>Tic-Tac-Toe</h3>
+@if (over)
+{
+    <b>@msg</b><br /><button @onclick="Reset">Restart</button> <button @onclick="OnExit.InvokeAsync">Menu</button>
+}
+else
+{
+    <div class="ttt-board">
+        @for (int i=0;i<3;i++)
+        {
+            @for (int j=0;j<3;j++)
+                {
+                    <button class="cell" @onclick="@(()=>Move(i,j))">@board[i,j]</button>
+                }
+            <br />
+        }
+    </div>
+    <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+}

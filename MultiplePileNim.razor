@@ -1,0 +1,48 @@
+@inject CombinationOfSchoolCode.Shared.GameEngine Engine
+@code {
+    [Parameter] public EventCallback OnExit { get; set; }
+    int[] piles = new int[3];
+    string? msg; bool over;
+    protected override void OnInitialized() => Reset();
+    void Take(int pileIndex, int n)
+    {
+        if (over || piles[pileIndex] < n) return;
+        piles[pileIndex] -= n;
+        if (piles.Sum() <= 0) { msg = "You took the last token. You lose."; over=true; Engine.AddLoss(); return; }
+        // AI plays from the biggest pile, removes up to 5
+        int ai = Array.IndexOf(piles, piles.Max());
+        int aiTake = Math.Min(5, piles[ai]);
+        msg = $"AI takes {aiTake} from pile {ai+1}.";
+        piles[ai] -= aiTake;
+        if (piles.Sum() <= 0) { msg = "AI took last token. You win!"; over=true; Engine.AddWin(); return; }
+        msg += $" Piles: [{string.Join(", ", piles)}]";
+    }
+    void Reset() { piles = new[] { Rand(10, 20), Rand(10, 20), Rand(10, 20) }; over = false; msg = null; }
+    int Rand(int a, int b) => new Random().Next(a, b);
+}
+<h3>Multiple Pile Nim</h3>
+@if (over)
+{
+    <b>@msg</b><br /><button @onclick="Reset">Restart</button> <button @onclick="OnExit.InvokeAsync">Menu</button>
+}
+else
+{
+    <div>
+        <p>@($"Piles: {string.Join(", ", piles)}")</p>
+        <span>@msg</span>
+        <p>
+            @for (int i=0;i<3;i++)
+            {
+                if (piles[i] > 0)
+                {
+                    <div>
+                    <b>Pile @(i+1) (@piles[i]):</b>
+                    @for (int t=1;t<=Math.Min(5,piles[i]);t++)
+                        { <button @onclick="() => Take(i,t)">Take @t</button> }
+                    </div>
+                }
+            }
+        </p>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}

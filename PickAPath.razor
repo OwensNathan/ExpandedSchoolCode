@@ -1,0 +1,5 @@
+@inject CombinationOfSchoolCode.Shared.GameEngine Engine
+@code { [Parameter] public EventCallback OnExit { get; set; } }
+<h3>Pick A Path</h3>
+<p>This is a placeholder for your choose-your-own-adventure. Extend it as you wish!</p>
+<button @onclick="OnExit.InvokeAsync">Back to Menu</button>

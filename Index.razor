@@ -1,0 +1,45 @@
+@page "/"
+@inject CombinationOfSchoolCode.Shared.GameEngine Engine
+
+<h2>Multi-Game Arcade</h2>
+<div>
+    <b>Wins:</b> @Engine.State.Wins |
+    <b>Losses:</b> @Engine.State.Losses |
+    <b>Deaths:</b> @Engine.State.Deaths
+</div>
+<hr />
+
+@if (_current == Menu.GameNone)
+{
+    <div class="menu">
+        <button @onclick="@(() => _current = Menu.Nim)">Single Pile Nim</button>
+        <button @onclick="@(() => _current = Menu.MultipleNim)">Multiple Pile Nim</button>
+        <button @onclick="@(() => _current = Menu.Guess)">Number Guessing</button>
+        <button @onclick="@(() => _current = Menu.TicTacToe)">Tic-Tac-Toe</button>
+        <button @onclick="@(() => _current = Menu.Connect4)">Connect 4</button>
+        <button @onclick="@(() => _current = Menu.Zookkooz)">Zookkooz</button>
+        <button @onclick="@(() => _current = Menu.PickAPath)">Pick A Path</button>
+        <hr />
+        <button @onclick="Save" class="minibtn">Save Progress</button>
+        <button @onclick="Load" class="minibtn">Load Progress</button>
+        <button @onclick="Reset" class="minibtn">Reset Stats</button>
+        @if (!string.IsNullOrEmpty(_msg)) <div class="msg">@_msg</div>
+    </div>
+}
+else if (_current == Menu.Nim)            { <SinglePileNim OnExit="ShowMenu" /> }
+else if (_current == Menu.MultipleNim)    { <MultiplePileNim OnExit="ShowMenu" /> }
+else if (_current == Menu.Guess)          { <NumberGuess OnExit="ShowMenu" /> }
+else if (_current == Menu.TicTacToe)      { <TicTacToe OnExit="ShowMenu" /> }
+else if (_current == Menu.Connect4)       { <Connect4 OnExit="ShowMenu" /> }
+else if (_current == Menu.Zookkooz)       { <Zookkooz OnExit="ShowMenu" /> }
+else if (_current == Menu.PickAPath)      { <PickAPath OnExit="ShowMenu" /> }
+
+@code {
+    enum Menu { GameNone, Nim, MultipleNim, Guess, TicTacToe, Connect4, Zookkooz, PickAPath }
+    Menu _current = Menu.GameNone;
+    string? _msg;
+    void ShowMenu() { _current = Menu.GameNone; _msg = null; StateHasChanged(); }
+    async Task Save() { await Engine.SaveAsync(); _msg = "Saved!"; }
+    async Task Load() { await Engine.LoadAsync(); _msg = "Loaded!"; StateHasChanged(); }
+    void Reset() { Engine.Reset(); _msg = "Stats reset!"; }
+}

@@ -1,0 +1,39 @@
+@inject CombinationOfSchoolCode.Shared.GameEngine Engine
+@code {
+    [Parameter] public EventCallback OnExit { get; set; }
+    int pile;
+    string? msg;
+    bool over;
+    protected override void OnInitialized() => Reset();
+    void Take(int n)
+    {
+        if (over) return;
+        pile -= n;
+        if (pile <= 0) { msg = "You took the last token. You lose."; over = true; Engine.AddLoss(); return; }
+        int aiTake = Math.Min(3, ((pile - 1) % 4) + 1);
+        msg = $"AI takes {aiTake}.";
+        pile -= aiTake;
+        if (pile <= 0) { msg = "AI took last token. You win!"; over = true; Engine.AddWin(); return; }
+        msg += $" Tokens left: {pile}";
+    }
+    void Reset() { pile = new Random().Next(10, 50); over = false; msg = null; }
+}
+<h3>Single Pile Nim</h3>
+@if (over)
+{
+    <b>@msg</b><br /><button @onclick="Reset">Restart</button> <button @onclick="OnExit.InvokeAsync">Menu</button>
+}
+else
+{
+    <div>
+        <p>Tokens left: <b>@pile</b></p>
+        <span>@msg</span>
+        <p>
+            @for (int i = 1; i <= Math.Min(3, pile); i++)
+            {
+                <button @onclick="() => Take(i)">Take @i</button>
+            }
+        </p>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
