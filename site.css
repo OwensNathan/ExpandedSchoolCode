@@ -1,8 +1,0 @@
-body { font-family: sans-serif; margin:2em; }
-button { margin:0.25em; }
-input[type=number], input[type=text] { width:70px; margin-right:0.5em; }
-.menu { margin-bottom:2em; }
-.minibtn { margin-right:1em; }
-.ttt-board .cell { width:2.2em; height:2.2em; font-size:1.5em; }
-.c4-board .c4-cell { width:2.2em; height: 2.2em; font-size:1.3em; }
-.msg { margin-top:1em; color:green; }
