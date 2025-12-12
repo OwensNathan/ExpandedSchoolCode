@@ -1,7 +1,15 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+// Security: Disable error display in production, log errors instead
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+ini_set('log_errors', 1);
 error_reporting(E_ALL);
+
+// Security Headers
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:;");
+header('X-XSS-Protection: 1; mode=block');
 
 /**
  * Safe stack-based arithmetic expression evaluator
@@ -114,8 +122,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = "Please select a valid evaluator function.";
     }
 
-    setcookie('last_expression', $input, time() + 30*24*60*60);
-    setcookie('last_function', $selectedFunction, time() + 30*24*60*60);
+    // Security: Set cookies with HttpOnly, Secure (if HTTPS), and SameSite flags
+    $cookieOptions = [
+        'expires' => time() + 30*24*60*60,
+        'path' => '/',
+        'domain' => '',
+        'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+        'httponly' => true,
+        'samesite' => 'Strict'
+    ];
+    setcookie('last_expression', $input, $cookieOptions);
+    setcookie('last_function', $selectedFunction, $cookieOptions);
 }
 ?>
 <!DOCTYPE html>
