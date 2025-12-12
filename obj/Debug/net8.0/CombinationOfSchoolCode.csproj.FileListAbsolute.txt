@@ -1,8 +1,0 @@
-/home/runner/work/ExpandedSchoolCode/ExpandedSchoolCode/obj/Debug/net8.0/CombinationOfSchoolCode.csproj.AssemblyReference.cache
-/home/runner/work/ExpandedSchoolCode/ExpandedSchoolCode/obj/Debug/net8.0/rpswa.dswa.cache.json
-/home/runner/work/ExpandedSchoolCode/ExpandedSchoolCode/obj/Debug/net8.0/CombinationOfSchoolCode.GeneratedMSBuildEditorConfig.editorconfig
-/home/runner/work/ExpandedSchoolCode/ExpandedSchoolCode/obj/Debug/net8.0/CombinationOfSchoolCode.AssemblyInfoInputs.cache
-/home/runner/work/ExpandedSchoolCode/ExpandedSchoolCode/obj/Debug/net8.0/CombinationOfSchoolCode.AssemblyInfo.cs
-/home/runner/work/ExpandedSchoolCode/ExpandedSchoolCode/obj/Debug/net8.0/CombinationOfSchoolCode.csproj.CoreCompileInputs.cache
-/home/runner/work/ExpandedSchoolCode/ExpandedSchoolCode/obj/Debug/net8.0/CombinationOfSchoolCode.MvcApplicationPartsAssemblyInfo.cache
-/home/runner/work/ExpandedSchoolCode/ExpandedSchoolCode/obj/Debug/net8.0/CombinationOfSchoolCode.sourcelink.json
