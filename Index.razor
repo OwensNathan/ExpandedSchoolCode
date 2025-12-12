@@ -28,7 +28,10 @@
         <button @onclick="Save" class="minibtn">Save Progress</button>
         <button @onclick="Load" class="minibtn">Load Progress</button>
         <button @onclick="Reset" class="minibtn">Reset Stats</button>
-        @if (!string.IsNullOrEmpty(_msg)) <div class="msg">@_msg</div>
+        @if (!string.IsNullOrEmpty(_msg)) 
+        {
+            <div class="msg">@_msg</div>
+        }
     </div>
 }
 else if (_current == Menu.Nim)            { <SinglePileNim OnExit="ShowMenu" /> }

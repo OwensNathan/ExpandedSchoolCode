@@ -3,18 +3,18 @@
     [Parameter] public EventCallback OnExit { get; set; }
     int number, left;
     string? msg, guess = "";
-    bool over, won;
+    bool over;
     protected override void OnInitialized() => Reset();
     void Submit()
     {
         if (over) return;
         if (!int.TryParse(guess, out int g)) { msg = "Invalid value!"; return; }
-        if (g == number) { msg = $"Correct! Number was {number}."; over = true; won = true; Engine.AddWin(); return; }
+        if (g == number) { msg = $"Correct! Number was {number}."; over = true; Engine.AddWin(); return; }
         msg = g < number ? "Too low!" : "Too high!"; left--;
         if (left == 0) { over = true; msg = $"You lose! Number was {number}."; Engine.AddLoss(); }
         guess = "";
     }
-    void Reset() { number = new Random().Next(1, 101); left=10; msg=null; won=false; over=false; guess=""; }
+    void Reset() { number = new Random().Next(1, 101); left=10; msg=null; over=false; guess=""; }
 }
 <h3>Number Guessing</h3>
 @if (over)
