@@ -1,6 +1,7 @@
 @inject CombinationOfSchoolCode.Shared.GameEngine Engine
 @code {
     [Parameter] public EventCallback OnExit { get; set; }
+    private static readonly Random _random = new();
     int[] piles = new int[3];
     string? msg; bool over;
     protected override void OnInitialized() => Reset();
@@ -17,8 +18,7 @@
         if (piles.Sum() <= 0) { msg = "AI took last token. You win!"; over=true; Engine.AddWin(); return; }
         msg += $" Piles: [{string.Join(", ", piles)}]";
     }
-    void Reset() { piles = new[] { Rand(10, 20), Rand(10, 20), Rand(10, 20) }; over = false; msg = null; }
-    int Rand(int a, int b) => new Random().Next(a, b);
+    void Reset() { piles = new[] { _random.Next(10, 20), _random.Next(10, 20), _random.Next(10, 20) }; over = false; msg = null; }
 }
 <h3>Multiple Pile Nim</h3>
 @if (over)

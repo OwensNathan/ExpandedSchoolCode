@@ -1,6 +1,7 @@
 @inject CombinationOfSchoolCode.Shared.GameEngine Engine
 @code {
     [Parameter] public EventCallback OnExit { get; set; }
+    private static readonly Random _random = new();
     int pile;
     string? msg;
     bool over;
@@ -16,7 +17,7 @@
         if (pile <= 0) { msg = "AI took last token. You win!"; over = true; Engine.AddWin(); return; }
         msg += $" Tokens left: {pile}";
     }
-    void Reset() { pile = new Random().Next(10, 50); over = false; msg = null; }
+    void Reset() { pile = _random.Next(10, 50); over = false; msg = null; }
 }
 <h3>Single Pile Nim</h3>
 @if (over)

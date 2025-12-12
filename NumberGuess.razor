@@ -1,6 +1,7 @@
 @inject CombinationOfSchoolCode.Shared.GameEngine Engine
 @code {
     [Parameter] public EventCallback OnExit { get; set; }
+    private static readonly Random _random = new();
     int number, left;
     string? msg, guess = "";
     bool over;
@@ -14,7 +15,7 @@
         if (left == 0) { over = true; msg = $"You lose! Number was {number}."; Engine.AddLoss(); }
         guess = "";
     }
-    void Reset() { number = new Random().Next(1, 101); left=10; msg=null; over=false; guess=""; }
+    void Reset() { number = _random.Next(1, 101); left=10; msg=null; over=false; guess=""; }
 }
 <h3>Number Guessing</h3>
 @if (over)

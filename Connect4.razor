@@ -33,7 +33,14 @@
         return true;
     }
     bool Full() { for(int i=0;i<7;i++) if (board[0,i]==' ') return false; return true; }
-    void Reset() { board = new char[6,7]; over=false; msg=null; }
+    void Reset() 
+    { 
+        for(int i=0;i<6;i++) 
+            for(int j=0;j<7;j++) 
+                board[i,j]=' '; 
+        over=false; 
+        msg=null; 
+    }
 }
 <h3>Connect 4</h3>
 @if (over)
