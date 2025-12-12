@@ -5,7 +5,7 @@ using Blazored.LocalStorage;
 using CombinationOfSchoolCode.Shared;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add(typeof(CombinationOfSchoolCode.Index), "#app");
+builder.RootComponents.Add<CombinationOfSchoolCode.Index>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<GameEngine>();
