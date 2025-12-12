@@ -1,0 +1,57 @@
+body {
+    margin: 0;
+    background-color: #40ffc0;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    text-align: left;
+    padding: 15px;
+    border-bottom: 1px solid black;
+    font-size: 1.2em;
+    background-color: #00ffaa;
+}
+
+.navbar {
+    display: flex;
+    align-items: left;
+    padding: 20px;
+    background-color: #9effdf;
+    border-bottom: 1px solid black;
+}
+
+.home-icon img {
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+}
+
+.buttons button {
+    margin: 5px;
+    padding: 5px 10px;
+    background-color: #e3f2f3;
+    border: 1px solid #ccc;
+}
+
+main {
+    padding: 30px;
+    text-align: left;
+    min-height: 300px;
+}
+
+main p {
+    text-align: left;
+    margin-top: 20px;
+}
+
+footer {
+    text-align: left;
+    padding: 15px;
+    font-size: 0.9em;
+    font-color: #000;
+    background-color: #82ffd1;
+    border-top: 1px solid black;
+}
+a {
+    margin-left: 10px;
+}
