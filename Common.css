@@ -1,0 +1,55 @@
+/* Common styles shared across all pages */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+a {
+    margin-left: 10px;
+}
+
+footer {
+    color: #000;
+    text-align: left;
+    padding: 15px;
+    font-size: 0.9em;
+    border-top: 1px solid black;
+}
+
+header {
+    text-align: left;
+    padding: 15px;
+    border-bottom: 1px solid black;
+    font-size: 1.2em;
+}
+
+.navbar {
+    display: flex;
+    align-items: left;
+    padding: 20px;
+    border-bottom: 1px solid black;
+}
+
+.home-icon img {
+    margin-right: 10px;
+}
+
+.buttons button {
+    background-color: #e3f2f3;
+    border: 1px solid #ccc;
+}
+
+main {
+    padding: 30px;
+    text-align: left;
+    min-height: 300px;
+}
+
+main p {
+    text-align: left;
+    margin-top: 20px;
+}
+
+li {
+    text-align: left;
+}
