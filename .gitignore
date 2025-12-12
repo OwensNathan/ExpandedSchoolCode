@@ -23,8 +23,8 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 
-# Blazor specific
-wwwroot/
+# Blazor specific - ignore build output wwwroot, not source wwwroot
+# wwwroot/ is needed for Blazor WebAssembly projects
 
 # User-specific files
 *.user
