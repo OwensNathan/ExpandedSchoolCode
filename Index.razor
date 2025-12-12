@@ -7,6 +7,11 @@
     <b>Losses:</b> @Engine.State.Losses |
     <b>Deaths:</b> @Engine.State.Deaths
 </div>
+<div style="margin-top: 10px;">
+    <a href="HomePage.html" style="text-decoration: none;">
+        <button style="padding: 10px 20px; cursor: pointer;">View RTS Games Info</button>
+    </a>
+</div>
 <hr />
 
 @if (_current == Menu.GameNone)
@@ -23,7 +28,10 @@
         <button @onclick="Save" class="minibtn">Save Progress</button>
         <button @onclick="Load" class="minibtn">Load Progress</button>
         <button @onclick="Reset" class="minibtn">Reset Stats</button>
-        @if (!string.IsNullOrEmpty(_msg)) <div class="msg">@_msg</div>
+        @if (!string.IsNullOrEmpty(_msg)) 
+        {
+            <div class="msg">@_msg</div>
+        }
     </div>
 }
 else if (_current == Menu.Nim)            { <SinglePileNim OnExit="ShowMenu" /> }
