@@ -52,7 +52,7 @@ Each game is implemented as a separate Razor component:
 - `HomePage.html` - Central hub for RTS game information
 - `StarCraft.html`, `StarCraftOne.html`, `StarCraftTwo.html` - StarCraft series info
 - `AgeofEmpires.html`, `AOE1.html`, `AOE2.html` - Age of Empires series info
-- `NorthGard.html` - Northgard game info
+- `NorthGard.html` - Northgard game info (note: filename has capital G)
 - `TWS.html` - Additional RTS content
 
 ### Navigation
