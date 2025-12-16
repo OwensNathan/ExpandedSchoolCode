@@ -1,5 +1,313 @@
+@implements IDisposable
 @inject CombinationOfSchoolCode.Shared.GameEngine Engine
-@code { [Parameter] public EventCallback OnExit { get; set; } }
-<h3>Zookkooz</h3>
-<p>This is a placeholder for your text adventure. Extend it as you wish!</p>
-<button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+@inject IJSRuntime JSRuntime
+
+<h3>Zookkooz (Kroz Adventure)</h3>
+
+@if (!gameStarted)
+{
+    <div>
+        <p>Welcome to Zookkooz! Navigate through the dungeon, collect all gems (💎), avoid enemies (👾), and reach the exit (🚪)!</p>
+        <p><strong>Controls:</strong> Use W/A/S/D or Arrow keys to move</p>
+        <p><strong>Legend:</strong></p>
+        <ul>
+            <li>🧑 - You (Player)</li>
+            <li>💎 - Gems (collect them all!)</li>
+            <li>👾 - Enemy (avoid or you die!)</li>
+            <li>🚪 - Exit (reach it to win)</li>
+            <li>🧱 - Walls (can't pass through)</li>
+        </ul>
+        <button @onclick="StartGame">Start Game</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (gameOver)
+{
+    <div>
+        <h4>@gameMessage</h4>
+        <p>Gems Collected: @gemsCollected / @totalGems</p>
+        <button @onclick="StartGame">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else
+{
+    <div>
+        <p>Gems: @gemsCollected / @totalGems | Moves: @moveCount</p>
+        <div style="font-family: monospace; line-height: 1.2; font-size: 24px;">
+            @for (int row = 0; row < gridHeight; row++)
+            {
+                <div>
+                    @for (int col = 0; col < gridWidth; col++)
+                    {
+                        @GetCellDisplay(row, col)
+                    }
+                </div>
+            }
+        </div>
+        <p style="margin-top: 10px;">@statusMessage</p>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+
+@code {
+    [Parameter] public EventCallback OnExit { get; set; }
+
+    private bool gameStarted = false;
+    private bool gameOver = false;
+    private string gameMessage = "";
+    private string statusMessage = "";
+    private int moveCount = 0;
+
+    private const int gridWidth = 15;
+    private const int gridHeight = 10;
+    private char[,] grid = new char[gridHeight, gridWidth];
+    
+    private int playerRow = 1;
+    private int playerCol = 1;
+    private int exitRow = 8;
+    private int exitCol = 13;
+    
+    private int gemsCollected = 0;
+    private int totalGems = 0;
+    
+    private List<(int row, int col)> enemies = new List<(int, int)>();
+    private DotNetObjectReference<Zookkooz>? dotNetReference;
+    private string listenerId = Guid.NewGuid().ToString();
+
+    public void Dispose()
+    {
+        if (dotNetReference != null)
+        {
+            JSRuntime.InvokeVoidAsync("cleanupKeyboardListener", listenerId);
+            dotNetReference?.Dispose();
+        }
+    }
+
+    [JSInvokable]
+    public void HandleKeyPress(string key)
+    {
+        if (!gameStarted || gameOver) return;
+
+        int newRow = playerRow;
+        int newCol = playerCol;
+
+        switch (key.ToUpper())
+        {
+            case "W":
+            case "ARROWUP":
+                newRow--;
+                break;
+            case "S":
+            case "ARROWDOWN":
+                newRow++;
+                break;
+            case "A":
+            case "ARROWLEFT":
+                newCol--;
+                break;
+            case "D":
+            case "ARROWRIGHT":
+                newCol++;
+                break;
+            default:
+                return;
+        }
+
+        TryMove(newRow, newCol);
+    }
+
+    private async Task StartGame()
+    {
+        gameStarted = true;
+        gameOver = false;
+        gameMessage = "";
+        statusMessage = "Collect all gems to unlock the exit!";
+        moveCount = 0;
+        gemsCollected = 0;
+        
+        InitializeGrid();
+        StateHasChanged();
+        
+        // Setup keyboard listener after UI is rendered
+        await Task.Delay(10);
+        dotNetReference = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("setupKeyboardListener", dotNetReference, listenerId);
+    }
+
+    private void InitializeGrid()
+    {
+        // Clear grid
+        for (int r = 0; r < gridHeight; r++)
+        {
+            for (int c = 0; c < gridWidth; c++)
+            {
+                grid[r, c] = ' ';
+            }
+        }
+
+        // Add borders
+        for (int r = 0; r < gridHeight; r++)
+        {
+            grid[r, 0] = '#';
+            grid[r, gridWidth - 1] = '#';
+        }
+        for (int c = 0; c < gridWidth; c++)
+        {
+            grid[0, c] = '#';
+            grid[gridHeight - 1, c] = '#';
+        }
+
+        // Add some internal walls
+        for (int r = 2; r < 6; r++)
+        {
+            grid[r, 5] = '#';
+        }
+        for (int c = 7; c < 12; c++)
+        {
+            grid[4, c] = '#';
+        }
+        grid[7, 7] = '#';
+        grid[7, 8] = '#';
+        grid[6, 10] = '#';
+        grid[5, 10] = '#';
+
+        // Place player at start
+        playerRow = 1;
+        playerCol = 1;
+
+        // Place exit
+        exitRow = gridHeight - 2;
+        exitCol = gridWidth - 2;
+        grid[exitRow, exitCol] = 'E';
+
+        // Place gems
+        totalGems = 0;
+        int[] gemPositions = { 3, 3, 3, 7, 3, 11, 6, 3, 6, 7, 8, 5, 8, 10 };
+        for (int i = 0; i < gemPositions.Length; i += 2)
+        {
+            if (grid[gemPositions[i], gemPositions[i + 1]] == ' ')
+            {
+                grid[gemPositions[i], gemPositions[i + 1]] = 'G';
+                totalGems++;
+            }
+        }
+
+        // Place enemies
+        enemies.Clear();
+        enemies.Add((2, 8));
+        enemies.Add((5, 12));
+        enemies.Add((7, 4));
+        foreach (var enemy in enemies)
+        {
+            if (grid[enemy.row, enemy.col] == ' ')
+            {
+                grid[enemy.row, enemy.col] = 'M';
+            }
+        }
+    }
+
+    private void TryMove(int newRow, int newCol)
+    {
+        // Check bounds
+        if (newRow < 0 || newRow >= gridHeight || newCol < 0 || newCol >= gridWidth)
+            return;
+
+        char targetCell = grid[newRow, newCol];
+
+        // Check wall
+        if (targetCell == '#')
+        {
+            statusMessage = "Can't walk through walls!";
+            StateHasChanged();
+            return;
+        }
+
+        // Check enemy
+        if (targetCell == 'M')
+        {
+            gameOver = true;
+            gameMessage = "💀 You were caught by an enemy! Game Over!";
+            Engine.AddDeath();
+            StateHasChanged();
+            return;
+        }
+
+        // Check gem
+        if (targetCell == 'G')
+        {
+            gemsCollected++;
+            statusMessage = $"Collected a gem! ({gemsCollected}/{totalGems})";
+            if (gemsCollected == totalGems)
+            {
+                statusMessage = "All gems collected! The exit is now open!";
+            }
+        }
+
+        // Check exit
+        if (targetCell == 'E')
+        {
+            if (gemsCollected >= totalGems)
+            {
+                gameOver = true;
+                gameMessage = $"🎉 Congratulations! You escaped in {moveCount + 1} moves!";
+                Engine.AddWin();
+                StateHasChanged();
+                return;
+            }
+            else
+            {
+                statusMessage = $"The exit is locked! Collect all gems first. ({gemsCollected}/{totalGems})";
+                StateHasChanged();
+                return;
+            }
+        }
+
+        // Move player
+        grid[playerRow, playerCol] = ' ';
+        playerRow = newRow;
+        playerCol = newCol;
+        moveCount++;
+
+        StateHasChanged();
+    }
+
+    private string GetCellDisplay(int row, int col)
+    {
+        if (row == playerRow && col == playerCol)
+            return "🧑";
+        
+        char cell = grid[row, col];
+        return cell switch
+        {
+            '#' => "🧱",
+            'G' => "💎",
+            'M' => "👾",
+            'E' => "🚪",
+            _ => "  "
+        };
+    }
+}
+
+<script>
+    window.zookkozListeners = window.zookkozListeners || {};
+    
+    window.setupKeyboardListener = (dotnetHelper, listenerId) => {
+        const listener = (e) => {
+            if (['w', 'a', 's', 'd', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+                dotnetHelper.invokeMethodAsync('HandleKeyPress', e.key);
+            }
+        };
+        window.zookkozListeners[listenerId] = listener;
+        document.addEventListener('keydown', listener);
+    };
+    
+    window.cleanupKeyboardListener = (listenerId) => {
+        const listener = window.zookkozListeners[listenerId];
+        if (listener) {
+            document.removeEventListener('keydown', listener);
+            delete window.zookkozListeners[listenerId];
+        }
+    };
+</script>

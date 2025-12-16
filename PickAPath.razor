@@ -1,5 +1,228 @@
 @inject CombinationOfSchoolCode.Shared.GameEngine Engine
-@code { [Parameter] public EventCallback OnExit { get; set; } }
-<h3>Pick A Path</h3>
-<p>This is a placeholder for your choose-your-own-adventure. Extend it as you wish!</p>
-<button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+
+<h3>Pick A Path - The Enchanted Forest</h3>
+
+@if (currentNode == "start")
+{
+    <div>
+        <h4>🌲 Welcome, Adventurer! 🌲</h4>
+        <p>You stand at the edge of an ancient enchanted forest. The trees tower above you, their branches swaying mysteriously in the wind. You've heard tales of a legendary treasure hidden deep within, but also of the dangers that lurk in the shadows.</p>
+        <p>Before you are three paths:</p>
+        <button @onclick='() => MakeChoice("path_left")' class="choice-btn">Take the left path (looks well-traveled)</button>
+        <button @onclick='() => MakeChoice("path_center")' class="choice-btn">Take the center path (darker and mysterious)</button>
+        <button @onclick='() => MakeChoice("path_right")' class="choice-btn">Take the right path (sunlight filters through)</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "path_left")
+{
+    <div>
+        <h4>🛤️ The Well-Traveled Path</h4>
+        <p>You follow the left path. The ground is worn smooth by countless footsteps. After a short walk, you encounter an old merchant sitting beside a campfire.</p>
+        <p>"Greetings, traveler!" he says. "I have a magical compass that always points to treasure. I'll trade it for 50 gold coins, or you can try your luck without it."</p>
+        <button @onclick='() => MakeChoice("buy_compass")' class="choice-btn">Buy the compass (you have exactly 50 gold)</button>
+        <button @onclick='() => MakeChoice("decline_merchant")' class="choice-btn">Politely decline and continue</button>
+        <button @onclick='() => MakeChoice("rob_merchant")' class="choice-btn">Attempt to rob the merchant</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "path_center")
+{
+    <div>
+        <h4>🌑 The Dark Path</h4>
+        <p>The center path grows darker as you venture deeper. Strange whispers echo around you. Suddenly, you see glowing eyes in the shadows—a dire wolf blocks your path!</p>
+        <p>The wolf growls menacingly. What do you do?</p>
+        <button @onclick='() => MakeChoice("fight_wolf")' class="choice-btn">Fight the wolf with your sword</button>
+        <button @onclick='() => MakeChoice("befriend_wolf")' class="choice-btn">Try to befriend the wolf with food</button>
+        <button @onclick='() => MakeChoice("run_from_wolf")' class="choice-btn">Run away quickly</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "path_right")
+{
+    <div>
+        <h4>☀️ The Sunlit Path</h4>
+        <p>The right path is pleasant and warm. Sunlight dances through the leaves. You come across a beautiful clearing with a crystal-clear pond.</p>
+        <p>In the center of the pond, you see something shimmering beneath the water. A sign reads: "Only the pure of heart may claim the prize."</p>
+        <button @onclick='() => MakeChoice("swim_pond")' class="choice-btn">Swim to the center of the pond</button>
+        <button @onclick='() => MakeChoice("walk_around_pond")' class="choice-btn">Walk around the pond and continue</button>
+        <button @onclick='() => MakeChoice("drink_water")' class="choice-btn">Drink from the pond first</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "buy_compass")
+{
+    <div>
+        <h4>🧭 The Magical Compass</h4>
+        <p>You trade your gold for the compass. It immediately spins and points deeper into the forest. Following it carefully, you navigate through dangerous areas safely.</p>
+        <p>The compass leads you to a hidden cave. Inside, you find the legendary treasure chest!</p>
+        <p><strong>🏆 Victory! You found the treasure!</strong></p>
+        <p>The compass was worth every coin. You return home a wealthy adventurer!</p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "decline_merchant")
+{
+    <div>
+        <h4>🗺️ Going Alone</h4>
+        <p>You thank the merchant and continue on your own. The path splits again into two trails. One leads uphill, the other downhill.</p>
+        <button @onclick='() => MakeChoice("uphill")' class="choice-btn">Take the uphill trail</button>
+        <button @onclick='() => MakeChoice("downhill")' class="choice-btn">Take the downhill trail</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "rob_merchant")
+{
+    <div>
+        <h4>⚔️ Bad Decision</h4>
+        <p>You attempt to rob the merchant, but he's actually a powerful wizard in disguise!</p>
+        <p>"Foolish mortal!" he thunders, and with a wave of his staff, you're turned into a frog.</p>
+        <p><strong>💀 Game Over! You spent the rest of your days as a frog by the merchant's campfire.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "fight_wolf")
+{
+    <div>
+        <h4>⚔️ The Battle</h4>
+        <p>You draw your sword and face the dire wolf. The battle is fierce! You manage to wound the wolf, but it's stronger than you expected.</p>
+        <p>With a final lunge, the wolf overpowers you.</p>
+        <p><strong>💀 Game Over! The dire wolf was too powerful.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "befriend_wolf")
+{
+    <div>
+        <h4>🐺 A Loyal Companion</h4>
+        <p>You slowly offer the wolf some dried meat from your pack. The wolf sniffs cautiously, then accepts your offering.</p>
+        <p>The wolf's eyes soften, and it begins to wag its tail. It becomes your loyal companion!</p>
+        <p>Together, you explore deeper into the forest. The wolf's keen senses lead you safely past traps and dangers, eventually finding a secret grove where the treasure lies!</p>
+        <p><strong>🏆 Victory! With your new companion's help, you found the treasure!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "run_from_wolf")
+{
+    <div>
+        <h4>🏃 Retreat!</h4>
+        <p>You turn and run as fast as you can! The wolf chases you, but you manage to escape.</p>
+        <p>Unfortunately, in your panic, you get completely lost. You wander for days trying to find your way out.</p>
+        <p><strong>😞 Loss: You eventually make it home, exhausted and empty-handed.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "swim_pond")
+{
+    <div>
+        <h4>💎 The Crystal Prize</h4>
+        <p>You wade into the pond and swim to the center. The water is refreshing and pure. As you reach the shimmering object, you find it's a magical crystal!</p>
+        <p>The crystal glows with inner light and grants you the vision to see hidden paths. Using this gift, you easily navigate to the treasure's location!</p>
+        <p><strong>🏆 Victory! The pure waters rewarded your brave heart!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "walk_around_pond")
+{
+    <div>
+        <h4>🚶 The Long Way</h4>
+        <p>You decide not to disturb the pond and walk around it. The path continues through pleasant forest.</p>
+        <p>However, without the crystal's guidance, you eventually reach a dead end. The treasure remains hidden from you.</p>
+        <p><strong>😞 Loss: You return home safely but without finding the treasure.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "drink_water")
+{
+    <div>
+        <h4>🧪 Poisoned!</h4>
+        <p>You kneel and drink from the pond. The water tastes sweet at first, but then you feel dizzy.</p>
+        <p>The sign said "pure of heart" - but drinking was a test of greed! The water was enchanted to reveal those who would take without permission.</p>
+        <p><strong>💀 Game Over! The enchanted water was not meant for drinking.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "uphill")
+{
+    <div>
+        <h4>⛰️ Mountain Peak</h4>
+        <p>You climb the steep uphill path. It's exhausting, but at the top, you find a magnificent view. From here, you spot smoke rising from a hidden valley below—a sign of civilization!</p>
+        <p>You descend and find a village of forest dwellers. They've been guarding the treasure for generations and, impressed by your perseverance in climbing the mountain, they grant you access to it!</p>
+        <p><strong>🏆 Victory! Your determination was rewarded!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "downhill")
+{
+    <div>
+        <h4>🕳️ Into the Ravine</h4>
+        <p>You take the easier downhill path. It leads to a deep ravine with a rickety rope bridge.</p>
+        <p>As you step onto the bridge, the ropes snap! You fall into the ravine below.</p>
+        <p><strong>💀 Game Over! The old bridge couldn't support your weight.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+
+@code {
+    [Parameter] public EventCallback OnExit { get; set; }
+
+    private string currentNode = "start";
+
+    private void MakeChoice(string nextNode)
+    {
+        string previousNode = currentNode;
+        currentNode = nextNode;
+
+        // Track game outcomes
+        if (IsWinNode(nextNode))
+        {
+            Engine.AddWin();
+        }
+        else if (IsDeathNode(nextNode))
+        {
+            Engine.AddDeath();
+        }
+        else if (IsLossNode(nextNode))
+        {
+            Engine.AddLoss();
+        }
+
+        StateHasChanged();
+    }
+
+    private void RestartGame()
+    {
+        currentNode = "start";
+        StateHasChanged();
+    }
+
+    private bool IsWinNode(string node)
+    {
+        return node == "buy_compass" || node == "befriend_wolf" || node == "swim_pond" || node == "uphill";
+    }
+
+    private bool IsDeathNode(string node)
+    {
+        return node == "rob_merchant" || node == "fight_wolf" || node == "drink_water" || node == "downhill";
+    }
+
+    private bool IsLossNode(string node)
+    {
+        return node == "run_from_wolf" || node == "walk_around_pond";
+    }
+}
