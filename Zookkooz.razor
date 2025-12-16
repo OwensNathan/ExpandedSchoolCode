@@ -1,4 +1,6 @@
+@implements IDisposable
 @inject CombinationOfSchoolCode.Shared.GameEngine Engine
+@inject IJSRuntime JSRuntime
 
 <h3>Zookkooz (Kroz Adventure)</h3>
 
@@ -70,18 +72,15 @@ else
     private int totalGems = 0;
     
     private List<(int row, int col)> enemies = new List<(int, int)>();
+    private DotNetObjectReference<Zookkooz>? dotNetReference;
+    private string listenerId = Guid.NewGuid().ToString();
 
-    protected override void OnInitialized()
+    public void Dispose()
     {
-        // Setup keyboard listener
-        base.OnInitialized();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
+        if (dotNetReference != null)
         {
-            await JSRuntime.InvokeVoidAsync("setupKeyboardListener", DotNetObjectReference.Create(this));
+            JSRuntime.InvokeVoidAsync("cleanupKeyboardListener", listenerId);
+            dotNetReference?.Dispose();
         }
     }
 
@@ -118,7 +117,7 @@ else
         TryMove(newRow, newCol);
     }
 
-    private void StartGame()
+    private async Task StartGame()
     {
         gameStarted = true;
         gameOver = false;
@@ -129,6 +128,11 @@ else
         
         InitializeGrid();
         StateHasChanged();
+        
+        // Setup keyboard listener after UI is rendered
+        await Task.Delay(10);
+        dotNetReference = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("setupKeyboardListener", dotNetReference, listenerId);
     }
 
     private void InitializeGrid()
@@ -285,16 +289,25 @@ else
     }
 }
 
-@inject IJSRuntime JSRuntime
-
 <script>
-    window.setupKeyboardListener = (dotnetHelper) => {
-        window.currentKeyListener = (e) => {
+    window.zookkozListeners = window.zookkozListeners || {};
+    
+    window.setupKeyboardListener = (dotnetHelper, listenerId) => {
+        const listener = (e) => {
             if (['w', 'a', 's', 'd', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
                 e.preventDefault();
                 dotnetHelper.invokeMethodAsync('HandleKeyPress', e.key);
             }
         };
-        document.addEventListener('keydown', window.currentKeyListener);
+        window.zookkozListeners[listenerId] = listener;
+        document.addEventListener('keydown', listener);
+    };
+    
+    window.cleanupKeyboardListener = (listenerId) => {
+        const listener = window.zookkozListeners[listenerId];
+        if (listener) {
+            document.removeEventListener('keydown', listener);
+            delete window.zookkozListeners[listenerId];
+        }
     };
 </script>
