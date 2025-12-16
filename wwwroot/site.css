@@ -6,3 +6,19 @@ input[type=number], input[type=text] { width:70px; margin-right:0.5em; }
 .ttt-board .cell { width:2.2em; height:2.2em; font-size:1.5em; }
 .c4-board .c4-cell { width:2.2em; height: 2.2em; font-size:1.3em; }
 .msg { margin-top:1em; color:green; }
+.choice-btn { 
+    display: block; 
+    margin: 10px 0; 
+    padding: 12px 20px; 
+    width: 100%; 
+    text-align: left; 
+    cursor: pointer; 
+    background-color: #f0f0f0; 
+    border: 2px solid #ccc; 
+    border-radius: 5px; 
+    font-size: 16px; 
+}
+.choice-btn:hover { 
+    background-color: #e0e0e0; 
+    border-color: #999; 
+}
