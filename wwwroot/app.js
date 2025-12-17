@@ -717,7 +717,38 @@ class ZookkoozGame {
         this.enemies = [];
         
         this.keyListener = null;
+        
+        // Add game-specific styles once
+        this.addGameStyles();
+        
         this.render();
+    }
+    
+    addGameStyles() {
+        // Only add styles if they don't exist
+        if (!document.getElementById('zookkooz-style')) {
+            const style = document.createElement('style');
+            style.id = 'zookkooz-style';
+            style.textContent = `
+                .zookkooz-cell {
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #1a1a1a;
+                    border: 1px solid #444;
+                    font-size: 32px;
+                    line-height: 1;
+                    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+                    box-sizing: border-box;
+                }
+                .zookkooz-cell:hover {
+                    background-color: #2a2a2a;
+                }
+            `;
+            document.head.appendChild(style);
+        }
     }
 
     startGame() {
@@ -921,13 +952,15 @@ class ZookkoozGame {
             [0, 1]    // right
         ];
         
+        // First, clear all enemy positions from grid
+        for (const [enemyRow, enemyCol] of this.enemies) {
+            this.grid[enemyRow][enemyCol] = ' ';
+        }
+        
         const newEnemyPositions = [];
         
         for (let i = 0; i < this.enemies.length; i++) {
             const [enemyRow, enemyCol] = this.enemies[i];
-            
-            // Clear current enemy position
-            this.grid[enemyRow][enemyCol] = ' ';
             
             // Try to move in a random direction
             const validMoves = [];
@@ -955,19 +988,27 @@ class ZookkoozGame {
                 newCol = randomMove[1];
             }
             
-            // Check if enemy moved onto player
-            if (newRow === this.playerRow && newCol === this.playerCol) {
+            newEnemyPositions.push([newRow, newCol]);
+        }
+        
+        // Check if any enemy moved onto player position before updating grid
+        for (const [row, col] of newEnemyPositions) {
+            if (row === this.playerRow && col === this.playerCol) {
                 this.gameOver = true;
                 this.gameMessage = '💀 An enemy caught you! Game Over!';
                 gameEngine.addDeath();
                 this.cleanupKeyboard();
+                // Restore enemy positions to grid before returning
+                for (const [eRow, eCol] of newEnemyPositions) {
+                    if (this.grid[eRow][eCol] === ' ') {
+                        this.grid[eRow][eCol] = 'M';
+                    }
+                }
                 return false; // Signal game over
             }
-            
-            newEnemyPositions.push([newRow, newCol]);
         }
         
-        // Update all enemy positions
+        // Update all enemy positions in array and grid
         this.enemies = newEnemyPositions;
         for (const [row, col] of this.enemies) {
             this.grid[row][col] = 'M';
@@ -1054,31 +1095,6 @@ class ZookkoozGame {
                     <button id="menuBtn">Back to Menu</button>
                 </div>
             `;
-            
-            // Add styles for the cells
-            const style = document.createElement('style');
-            style.textContent = `
-                .zookkooz-cell {
-                    width: 40px;
-                    height: 40px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    background-color: #1a1a1a;
-                    border: 1px solid #444;
-                    font-size: 32px;
-                    line-height: 1;
-                    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-                    box-sizing: border-box;
-                }
-                .zookkooz-cell:hover {
-                    background-color: #2a2a2a;
-                }
-            `;
-            if (!document.getElementById('zookkooz-style')) {
-                style.id = 'zookkooz-style';
-                document.head.appendChild(style);
-            }
             
             document.getElementById('menuBtn').addEventListener('click', () => {
                 this.cleanupKeyboard();
