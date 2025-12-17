@@ -75,6 +75,8 @@ else
     private List<(int row, int col)> enemies = new List<(int, int)>();
     private DotNetObjectReference<Zookkooz>? dotNetReference;
     private string listenerId = Guid.NewGuid().ToString();
+    
+    private const int MaxKeyLength = 20;
 
     public void Dispose()
     {
@@ -92,7 +94,7 @@ else
         if (string.IsNullOrEmpty(key) || !gameStarted || gameOver) return;
         
         // Limit key string length to prevent potential abuse
-        if (key.Length > 20) return;
+        if (key.Length > MaxKeyLength) return;
 
         int newRow = playerRow;
         int newCol = playerCol;
