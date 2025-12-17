@@ -1134,15 +1134,19 @@ class PickAPathGame {
     }
 
     isWinNode(node) {
-        return node === 'buy_compass' || node === 'befriend_wolf' || node === 'swim_pond' || node === 'uphill';
+        return node === 'buy_compass' || node === 'befriend_wolf' || node === 'swim_pond' || 
+               node === 'uphill' || node === 'choose_ruby' || node === 'choose_emerald' ||
+               node === 'trade_sword' || node === 'trade_ring' || node === 'wake_dragon';
     }
 
     isDeathNode(node) {
-        return node === 'rob_merchant' || node === 'fight_wolf' || node === 'drink_water' || node === 'downhill';
+        return node === 'rob_merchant' || node === 'fight_wolf' || node === 'drink_water' || 
+               node === 'downhill' || node === 'choose_sapphire' || node === 'sneak_treasure';
     }
 
     isLossNode(node) {
-        return node === 'run_from_wolf' || node === 'walk_around_pond';
+        return node === 'walk_around_pond' || node === 'choose_none' || node === 'keep_wandering' ||
+               node === 'refuse_trade' || node === 'leave_cave';
     }
 
     render() {
@@ -1153,10 +1157,11 @@ class PickAPathGame {
             content += `
                 <h4>🌲 Welcome, Adventurer! 🌲</h4>
                 <p>You stand at the edge of an ancient enchanted forest. The trees tower above you, their branches swaying mysteriously in the wind. You've heard tales of a legendary treasure hidden deep within, but also of the dangers that lurk in the shadows.</p>
-                <p>Before you are three paths:</p>
+                <p>Before you are four paths:</p>
                 <button class="choice-btn" data-choice="path_left">Take the left path (looks well-traveled)</button>
                 <button class="choice-btn" data-choice="path_center">Take the center path (darker and mysterious)</button>
                 <button class="choice-btn" data-choice="path_right">Take the right path (sunlight filters through)</button>
+                <button class="choice-btn" data-choice="path_hidden">Search for a hidden path</button>
             `;
         } else if (this.currentNode === 'path_left') {
             content += `
@@ -1229,10 +1234,11 @@ class PickAPathGame {
         } else if (this.currentNode === 'run_from_wolf') {
             content += `
                 <h4>🏃 Retreat!</h4>
-                <p>You turn and run as fast as you can! The wolf chases you, but you manage to escape.</p>
-                <p>Unfortunately, in your panic, you get completely lost. You wander for days trying to find your way out.</p>
-                <p><strong>😞 Loss: You eventually make it home, exhausted and empty-handed.</strong></p>
-                <button class="choice-btn" id="restartBtn">Play Again</button>
+                <p>You turn and run as fast as you can! The wolf chases you for a while, but eventually gives up. Your heart pounding, you find yourself in an unfamiliar part of the forest.</p>
+                <p>You notice two things: smoke rising in the distance, and a cave entrance nearby.</p>
+                <button class="choice-btn" data-choice="follow_smoke">Head towards the smoke</button>
+                <button class="choice-btn" data-choice="enter_cave">Take shelter in the cave</button>
+                <button class="choice-btn" data-choice="keep_wandering">Keep wandering and hope to find your way</button>
             `;
         } else if (this.currentNode === 'swim_pond') {
             content += `
@@ -1272,6 +1278,140 @@ class PickAPathGame {
                 <p>You take the easier downhill path. It leads to a deep ravine with a rickety rope bridge.</p>
                 <p>As you step onto the bridge, the ropes snap! You fall into the ravine below.</p>
                 <p><strong>💀 Game Over! The old bridge couldn't support your weight.</strong></p>
+                <button class="choice-btn" id="restartBtn">Play Again</button>
+            `;
+        } else if (this.currentNode === 'path_hidden') {
+            content += `
+                <h4>🔍 The Search</h4>
+                <p>You carefully examine the forest edge, pushing aside vines and bushes. After several minutes of searching, you discover a narrow, overgrown trail barely visible among the roots!</p>
+                <p>This path seems ancient and untouched. Strange runes are carved into the trees along its edges.</p>
+                <button class="choice-btn" data-choice="follow_hidden">Follow the hidden path</button>
+                <button class="choice-btn" data-choice="ignore_hidden">This feels too dangerous - choose a main path instead</button>
+            `;
+        } else if (this.currentNode === 'follow_hidden') {
+            content += `
+                <h4>🗿 Ancient Ruins</h4>
+                <p>The hidden path leads you to crumbling stone ruins covered in moss. In the center stands an old altar with three pedestals, each holding a different colored gemstone: ruby red, sapphire blue, and emerald green.</p>
+                <p>Ancient text above reads: "Choose wisely, for only one grants passage to the treasure. The others seal your fate."</p>
+                <button class="choice-btn" data-choice="choose_ruby">Touch the ruby (red like fire)</button>
+                <button class="choice-btn" data-choice="choose_sapphire">Touch the sapphire (blue like water)</button>
+                <button class="choice-btn" data-choice="choose_emerald">Touch the emerald (green like nature)</button>
+                <button class="choice-btn" data-choice="choose_none">Don't touch any - look for another way</button>
+            `;
+        } else if (this.currentNode === 'ignore_hidden') {
+            content += `
+                <h4>🔙 Back to the Start</h4>
+                <p>You decide the hidden path is too risky. You return to the main clearing where the three main paths await.</p>
+                <button class="choice-btn" data-choice="path_left">Take the left path</button>
+                <button class="choice-btn" data-choice="path_center">Take the center path</button>
+                <button class="choice-btn" data-choice="path_right">Take the right path</button>
+            `;
+        } else if (this.currentNode === 'choose_ruby') {
+            content += `
+                <h4>🔥 Trial by Fire</h4>
+                <p>As you touch the ruby, flames erupt around you! But instead of burning, they feel warm and comforting. The fire recognizes your courage.</p>
+                <p>The flames part, revealing a secret passage. You venture through and find the treasure chamber, protected by the ancient fire guardians who now grant you access!</p>
+                <p><strong>🏆 Victory! Your bravery passed the trial of fire!</strong></p>
+                <button class="choice-btn" id="restartBtn">Play Again</button>
+            `;
+        } else if (this.currentNode === 'choose_sapphire') {
+            content += `
+                <h4>💧 The Flooding Chamber</h4>
+                <p>You touch the sapphire and water begins to pour from the walls! The chamber fills rapidly.</p>
+                <p>You try to swim, but the current is too strong. The ancient trap was designed for those who chose wrong.</p>
+                <p><strong>💀 Game Over! The waters claimed another victim.</strong></p>
+                <button class="choice-btn" id="restartBtn">Play Again</button>
+            `;
+        } else if (this.currentNode === 'choose_emerald') {
+            content += `
+                <h4>🌿 Nature's Embrace</h4>
+                <p>Vines burst from the emerald, wrapping around you gently. They lift you up through a hidden opening in the ceiling, carrying you through the forest canopy like a magical elevator.</p>
+                <p>The vines set you down in a beautiful garden grove where the treasure chest sits, guarded by friendly forest spirits who smile at your choice!</p>
+                <p><strong>🏆 Victory! Nature itself guided you to the treasure!</strong></p>
+                <button class="choice-btn" id="restartBtn">Play Again</button>
+            `;
+        } else if (this.currentNode === 'choose_none') {
+            content += `
+                <h4>🧠 The Wise Choice</h4>
+                <p>Instead of touching the gemstones, you examine the altar more carefully. Behind it, you find a concealed lever covered in dust.</p>
+                <p>You pull the lever and a hidden door opens, revealing a safe passage. However, at the end, you find only an empty chamber - the treasure was moved long ago.</p>
+                <p><strong>😞 Loss: You were smart enough to avoid the traps, but the treasure had already been claimed by someone else.</strong></p>
+                <button class="choice-btn" id="restartBtn">Play Again</button>
+            `;
+        } else if (this.currentNode === 'follow_smoke') {
+            content += `
+                <h4>🏘️ The Hermit's Hut</h4>
+                <p>Following the smoke, you discover a small hut where a wise old hermit lives. He offers you tea and listens to your story.</p>
+                <p>"I know of the treasure you seek," he says. "I can give you a map, but I require something in return: your sword, or your family heirloom ring."</p>
+                <button class="choice-btn" data-choice="trade_sword">Trade your sword for the map</button>
+                <button class="choice-btn" data-choice="trade_ring">Trade your ring for the map</button>
+                <button class="choice-btn" data-choice="refuse_trade">Refuse and try to find it yourself</button>
+            `;
+        } else if (this.currentNode === 'enter_cave') {
+            content += `
+                <h4>🦇 The Cave of Wonders</h4>
+                <p>You enter the cave seeking shelter. As your eyes adjust to the darkness, you realize this is no ordinary cave - the walls glitter with precious gems!</p>
+                <p>But then you hear it: a deep rumbling breath. A dragon lies sleeping atop a pile of treasure, including what looks like the legendary chest you seek!</p>
+                <button class="choice-btn" data-choice="sneak_treasure">Try to sneak past and take the treasure</button>
+                <button class="choice-btn" data-choice="wake_dragon">Wake the dragon and negotiate</button>
+                <button class="choice-btn" data-choice="leave_cave">Leave quietly before it wakes</button>
+            `;
+        } else if (this.currentNode === 'keep_wandering') {
+            content += `
+                <h4>🗺️ Lost in the Woods</h4>
+                <p>You wander for hours, growing increasingly tired and disoriented. The forest seems to shift around you, paths appearing and disappearing.</p>
+                <p>As night falls, you realize you're hopelessly lost.</p>
+                <p><strong>😞 Loss: You eventually make it out days later, exhausted and empty-handed.</strong></p>
+                <button class="choice-btn" id="restartBtn">Play Again</button>
+            `;
+        } else if (this.currentNode === 'trade_sword') {
+            content += `
+                <h4>🗺️ The Hermit's Map</h4>
+                <p>You trade your sword for the map. The hermit smiles and hands you a detailed parchment showing the way to the treasure.</p>
+                <p>Following the map carefully, you navigate through the forest safely. Without your sword, you must avoid dangers, but the map's precision guides you perfectly to a hidden glade where the treasure chest awaits!</p>
+                <p><strong>🏆 Victory! The hermit's map was worth the trade!</strong></p>
+                <button class="choice-btn" id="restartBtn">Play Again</button>
+            `;
+        } else if (this.currentNode === 'trade_ring') {
+            content += `
+                <h4>💍 A Precious Loss</h4>
+                <p>You reluctantly trade your family heirloom ring. The hermit takes it, but as he examines it, his expression darkens.</p>
+                <p>"This ring... it belonged to my family!" he exclaims. "It was stolen generations ago! Thank you for returning it, even unknowingly."</p>
+                <p>Overjoyed, he not only gives you the map but also enchants you with a protection spell. You find the treasure easily and safely!</p>
+                <p><strong>🏆 Victory! Your heirloom's true destiny brought you fortune!</strong></p>
+                <button class="choice-btn" id="restartBtn">Play Again</button>
+            `;
+        } else if (this.currentNode === 'refuse_trade') {
+            content += `
+                <h4>🚶 Going It Alone</h4>
+                <p>You refuse the hermit's offer and set out on your own. The hermit shakes his head sadly as you leave.</p>
+                <p>Without the map, you wander for days searching. You find interesting things but never locate the treasure.</p>
+                <p><strong>😞 Loss: Pride kept you from succeeding. You return home with nothing but stories.</strong></p>
+                <button class="choice-btn" id="restartBtn">Play Again</button>
+            `;
+        } else if (this.currentNode === 'sneak_treasure') {
+            content += `
+                <h4>🐉 The Dragon Awakens</h4>
+                <p>You carefully tiptoe toward the treasure. You're almost there when your foot dislodges a coin. It clinks loudly across the stone floor.</p>
+                <p>The dragon's eye opens. A massive claw comes down, and in an instant, your adventure ends in flames.</p>
+                <p><strong>💀 Game Over! Never try to steal from a sleeping dragon.</strong></p>
+                <button class="choice-btn" id="restartBtn">Play Again</button>
+            `;
+        } else if (this.currentNode === 'wake_dragon') {
+            content += `
+                <h4>🐉 Dragon's Bargain</h4>
+                <p>You bravely step forward and call out to the dragon. It opens one massive eye and regards you with ancient intelligence.</p>
+                <p>"Bold, for a mortal," it rumbles. "I respect courage. Take ONE item from my hoard, but choose wisely."</p>
+                <p>You select the legendary treasure chest. The dragon nods approvingly. "You chose the one item that was never mine to keep. It was always meant for a worthy adventurer. Go in peace."</p>
+                <p><strong>🏆 Victory! Your courage earned the dragon's respect and the treasure!</strong></p>
+                <button class="choice-btn" id="restartBtn">Play Again</button>
+            `;
+        } else if (this.currentNode === 'leave_cave') {
+            content += `
+                <h4>🚪 Retreat from Danger</h4>
+                <p>You wisely decide not to risk facing a dragon. You back out of the cave quietly.</p>
+                <p>Outside, you continue searching but never find another path to the treasure. The dragon cave was your best chance.</p>
+                <p><strong>😞 Loss: Sometimes the greatest risks hold the greatest rewards. You return home safely but empty-handed.</strong></p>
                 <button class="choice-btn" id="restartBtn">Play Again</button>
             `;
         }
