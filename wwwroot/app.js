@@ -886,7 +886,15 @@ class ZookkoozGame {
         this.playerCol = newCol;
         this.moveCount++;
 
+        // Move enemies after player move
+        const continueGame = this.moveEnemies();
+        
         this.render();
+        
+        // If enemy caught player, don't continue
+        if (!continueGame) {
+            return;
+        }
     }
 
     getCellDisplay(row, col) {
@@ -900,8 +908,72 @@ class ZookkoozGame {
             case 'G': return '💎';
             case 'M': return '👾';
             case 'E': return '🚪';
-            default: return '  ';
+            default: return '·';
         }
+    }
+
+    moveEnemies() {
+        // Move each enemy randomly
+        const directions = [
+            [-1, 0],  // up
+            [1, 0],   // down
+            [0, -1],  // left
+            [0, 1]    // right
+        ];
+        
+        const newEnemyPositions = [];
+        
+        for (let i = 0; i < this.enemies.length; i++) {
+            const [enemyRow, enemyCol] = this.enemies[i];
+            
+            // Clear current enemy position
+            this.grid[enemyRow][enemyCol] = ' ';
+            
+            // Try to move in a random direction
+            const validMoves = [];
+            for (const [dr, dc] of directions) {
+                const newRow = enemyRow + dr;
+                const newCol = enemyCol + dc;
+                
+                // Check if move is valid
+                if (newRow >= 0 && newRow < this.gridHeight && 
+                    newCol >= 0 && newCol < this.gridWidth) {
+                    const targetCell = this.grid[newRow][newCol];
+                    // Can move to empty space only
+                    if (targetCell === ' ') {
+                        validMoves.push([newRow, newCol]);
+                    }
+                }
+            }
+            
+            // Choose a random valid move, or stay in place
+            let newRow = enemyRow;
+            let newCol = enemyCol;
+            if (validMoves.length > 0) {
+                const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+                newRow = randomMove[0];
+                newCol = randomMove[1];
+            }
+            
+            // Check if enemy moved onto player
+            if (newRow === this.playerRow && newCol === this.playerCol) {
+                this.gameOver = true;
+                this.gameMessage = '💀 An enemy caught you! Game Over!';
+                gameEngine.addDeath();
+                this.cleanupKeyboard();
+                return false; // Signal game over
+            }
+            
+            newEnemyPositions.push([newRow, newCol]);
+        }
+        
+        // Update all enemy positions
+        this.enemies = newEnemyPositions;
+        for (const [row, col] of this.enemies) {
+            this.grid[row][col] = 'M';
+        }
+        
+        return true; // Continue game
     }
 
     cleanupKeyboard() {
@@ -956,22 +1028,58 @@ class ZookkoozGame {
             let gridHtml = '';
             for (let row = 0; row < this.gridHeight; row++) {
                 for (let col = 0; col < this.gridWidth; col++) {
-                    gridHtml += this.getCellDisplay(row, col);
+                    const cellContent = this.getCellDisplay(row, col);
+                    gridHtml += `<div class="zookkooz-cell">${cellContent}</div>`;
                 }
-                gridHtml += '<br>';
             }
             
             app.innerHTML = `
                 <h3>Zookkooz (Kroz Adventure)</h3>
                 <div>
                     <p>Gems: ${this.gemsCollected} / ${this.totalGems} | Moves: ${this.moveCount}</p>
-                    <div style="font-family: monospace; line-height: 1.2; font-size: 24px;">
+                    <div class="zookkooz-grid" style="
+                        display: grid;
+                        grid-template-columns: repeat(${this.gridWidth}, 1fr);
+                        gap: 2px;
+                        width: fit-content;
+                        margin: 20px auto;
+                        padding: 10px;
+                        background-color: #333;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                    ">
                         ${gridHtml}
                     </div>
                     <p style="margin-top: 10px;">${this.statusMessage}</p>
                     <button id="menuBtn">Back to Menu</button>
                 </div>
             `;
+            
+            // Add styles for the cells
+            const style = document.createElement('style');
+            style.textContent = `
+                .zookkooz-cell {
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #1a1a1a;
+                    border: 1px solid #444;
+                    font-size: 32px;
+                    line-height: 1;
+                    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+                    box-sizing: border-box;
+                }
+                .zookkooz-cell:hover {
+                    background-color: #2a2a2a;
+                }
+            `;
+            if (!document.getElementById('zookkooz-style')) {
+                style.id = 'zookkooz-style';
+                document.head.appendChild(style);
+            }
+            
             document.getElementById('menuBtn').addEventListener('click', () => {
                 this.cleanupKeyboard();
                 showMenu();
