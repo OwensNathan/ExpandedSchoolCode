@@ -16,6 +16,7 @@
             <li>👾 - Enemy (avoid or you die!)</li>
             <li>🚪 - Exit (reach it to win)</li>
             <li>🧱 - Walls (can't pass through)</li>
+            <li>⬜ - Empty space (walkable path)</li>
         </ul>
         <button @onclick="StartGame">Start Game</button>
         <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
@@ -87,7 +88,11 @@ else
     [JSInvokable]
     public void HandleKeyPress(string key)
     {
-        if (!gameStarted || gameOver) return;
+        // Validate input is not null or empty
+        if (string.IsNullOrEmpty(key) || !gameStarted || gameOver) return;
+        
+        // Limit key string length to prevent potential abuse
+        if (key.Length > 20) return;
 
         int newRow = playerRow;
         int newCol = playerCol;
@@ -284,7 +289,7 @@ else
             'G' => "💎",
             'M' => "👾",
             'E' => "🚪",
-            _ => "  "
+            _ => "⬜"
         };
     }
 }
