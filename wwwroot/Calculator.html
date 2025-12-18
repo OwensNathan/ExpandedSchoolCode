@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
+    <title>Expression Calculator</title>
+    <link type="text/css" rel="stylesheet" href="Common.css" />
+    <link type="text/css" rel="stylesheet" href="Mobile.css" />
+    <link type="text/css" rel="stylesheet" href="Desktop.css" media="screen and (min-width: 500px)"/>
+    <style>
+        body { 
+            position: relative; 
+            overflow-x: hidden; 
+            min-height: 100vh; 
+        }
+        #raindrops { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            pointer-events: none; 
+            z-index: 0; 
+        }
+        .raindrop { 
+            position: absolute; 
+            top: -20px; 
+            width: 2px; 
+            background: #00f; 
+            opacity: 0.7; 
+            animation: fall linear infinite; 
+            transform: rotate(-10deg); 
+            box-shadow: 0 0 5px #00f, 0 0 10px #00f, 0 0 20px #0ff; 
+        }
+        @keyframes fall { 
+            0% { transform: translateY(0) rotate(-10deg); opacity: 0.7; } 
+            100% { transform: translateY(110vh) rotate(-10deg); opacity: 0.1; } 
+        }
+        header, footer, main, nav { 
+            position: relative; 
+            z-index: 1; 
+        }
+        .content { 
+            max-width: 600px; 
+            margin: 20px auto; 
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        input[type="text"], select { 
+            width: 100%; 
+            padding: 8px; 
+            margin-bottom: 15px; 
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .calc-button { 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            margin-right: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .calc-button:hover {
+            background: #45a049;
+        }
+        .result { 
+            background: rgba(76, 175, 80, 0.2); 
+            padding: 15px; 
+            margin: 15px 0; 
+            border-left: 4px solid #4CAF50;
+            border-radius: 4px;
+        }
+        .error {
+            background: rgba(244, 67, 54, 0.2);
+            border-left-color: #f44336;
+        }
+        .about-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        .about-section ul {
+            text-align: left;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="raindrops"></div>
+
+    <header>
+        <h1>Expression Calculator</h1>
+    </header>
+
+    <nav class="navbar">
+        <div class="home-icon">
+            <a href="HomePage.html"><img src="Picture1.png" alt="Home icon which is a hyperlink to the home page"></a>
+        </div>
+        <div class="buttons">
+            <a href="index.html">
+                <button>Game Arcade</button>
+            </a>
+            <a href="HomePage.html">
+                <button>RTS Games Home</button>
+            </a>
+            <a href="StarCraft.html">
+                <button>StarCraft Series</button>
+            </a>
+            <a href="AgeofEmpires.html">
+                <button>Age of Empires</button>
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="content">
+            <h2>Expression Calculator</h2>
+            
+            <div id="resultDiv"></div>
+            
+            <label for="calcFunction"><strong>Select evaluator function:</strong></label>
+            <select id="calcFunction">
+                <option value="">-- Select Function --</option>
+                <option value="evaluateExpression" selected>evaluateExpression</option>
+            </select>
+
+            <label for="calcInput"><strong>Enter expression:</strong></label>
+            <input type="text" id="calcInput" placeholder="e.g., (2+3)(4+5) or 2^3 or 2 3">
+            
+            <button class="calc-button" id="calcBtn">Calculate</button>
+
+            <div class="about-section">
+                <h3>About</h3>
+                <p>This evaluator safely handles +, -, *, /, ^, negative numbers, parentheses, and implicit multiplication—including numbers next to numbers like "2 3" and chained parentheses "(2+3)(4+5)(6+7)".</p>
+                <p><strong>Examples:</strong></p>
+                <ul>
+                    <li>2 + 3 * 4 = 14</li>
+                    <li>(2+3)(4+5) = 45</li>
+                    <li>2^3 = 8</li>
+                    <li>2 3 = 6 (implicit multiplication)</li>
+                    <li>-5 + 10 = 5</li>
+                    <li>(2+3)(4+5)(6+7) = 585</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Multi-Game Arcade & RTS Games Info</p>
+    </footer>
+
+    <script>
+        // Calculator functionality
+        function evaluateExpression(expr) {
+            expr = expr.replace(/\s/g, '');
+
+            // Global implicit multiplication:
+            // 1. Number or ')' followed by '('
+            expr = expr.replace(/(\d|\))(\()/g, '$1*$2');
+            // 2. ')' followed by number
+            expr = expr.replace(/(\))(\d)/g, '$1*$2');
+            // 3. Number followed by number (e.g., "2 3" becomes "2*3")
+            expr = expr.replace(/(\d)(?=\d)/g, '$1*');
+
+            if (/[^0-9+\-*\/^().]/.test(expr)) {
+                throw new Error("Invalid characters in expression");
+            }
+
+            return evaluateTokens(tokenize(expr));
+        }
+
+        function tokenize(expr) {
+            const tokens = [];
+            let number = '';
+            const length = expr.length;
+
+            for (let i = 0; i < length; i++) {
+                const char = expr[i];
+
+                // Number or decimal
+                if (/\d/.test(char) || char === '.') {
+                    number += char;
+                } else {
+                    if (number !== '') {
+                        tokens.push(number);
+                        number = '';
+                    }
+
+                    // Handle negative numbers
+                    if (char === '-' && (i === 0 || '+-*/(^'.includes(expr[i - 1]))) {
+                        number = '-';
+                    } else {
+                        tokens.push(char);
+                    }
+                }
+            }
+            if (number !== '') tokens.push(number);
+            return tokens;
+        }
+
+        function evaluateTokens(tokens) {
+            const values = [];
+            const ops = [];
+            const precedence = {
+                '+': [1, 'L'],
+                '-': [1, 'L'],
+                '*': [2, 'L'],
+                '/': [2, 'L'],
+                '^': [3, 'R']
+            };
+
+            const applyOp = () => {
+                const b = values.pop();
+                const a = values.pop();
+                const op = ops.pop();
+
+                switch (op) {
+                    case '+': values.push(a + b); break;
+                    case '-': values.push(a - b); break;
+                    case '*': values.push(a * b); break;
+                    case '/':
+                        if (b === 0) throw new Error("Division by zero");
+                        values.push(a / b);
+                        break;
+                    case '^': values.push(Math.pow(a, b)); break;
+                }
+            };
+
+            for (const token of tokens) {
+                if (!isNaN(parseFloat(token))) {
+                    values.push(parseFloat(token));
+                } else if (token === '(') {
+                    ops.push(token);
+                } else if (token === ')') {
+                    while (ops.length > 0 && ops[ops.length - 1] !== '(') {
+                        applyOp();
+                    }
+                    if (ops.length === 0) throw new Error("Mismatched parentheses");
+                    ops.pop();
+                } else if (precedence[token]) {
+                    const [p1, assoc1] = precedence[token];
+                    while (ops.length > 0 && precedence[ops[ops.length - 1]]) {
+                        const [p2] = precedence[ops[ops.length - 1]];
+                        if ((assoc1 === 'L' && p1 <= p2) || (assoc1 === 'R' && p1 < p2)) {
+                            applyOp();
+                        } else {
+                            break;
+                        }
+                    }
+                    ops.push(token);
+                } else {
+                    throw new Error("Invalid token: " + token);
+                }
+            }
+
+            while (ops.length > 0) {
+                if (ops[ops.length - 1] === '(' || ops[ops.length - 1] === ')') {
+                    throw new Error("Mismatched parentheses");
+                }
+                applyOp();
+            }
+
+            if (values.length !== 1) throw new Error("Invalid expression");
+            return values[0];
+        }
+
+        // Load saved values from localStorage
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedExpr = localStorage.getItem('calc_last_expression');
+            const savedFunc = localStorage.getItem('calc_last_function');
+            
+            if (savedExpr) {
+                document.getElementById('calcInput').value = savedExpr;
+            }
+            if (savedFunc) {
+                document.getElementById('calcFunction').value = savedFunc;
+            }
+
+            // Create raindrops
+            createRaindrops();
+        });
+
+        function calculate() {
+            const input = document.getElementById('calcInput').value;
+            const func = document.getElementById('calcFunction').value;
+            const resultDiv = document.getElementById('resultDiv');
+
+            if (func === 'evaluateExpression') {
+                try {
+                    const result = evaluateExpression(input);
+                    resultDiv.innerHTML = `<div class="result"><strong>Result:</strong> ${result}</div>`;
+                    
+                    // Save to localStorage
+                    localStorage.setItem('calc_last_expression', input);
+                    localStorage.setItem('calc_last_function', func);
+                } catch (e) {
+                    resultDiv.innerHTML = `<div class="result error"><strong>Error:</strong> ${e.message}</div>`;
+                }
+            } else {
+                resultDiv.innerHTML = `<div class="result error"><strong>Error:</strong> Please select a valid evaluator function.</div>`;
+            }
+        }
+
+        // Event listeners
+        document.getElementById('calcBtn').addEventListener('click', calculate);
+        document.getElementById('calcInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+
+        // Raindrops animation
+        function createRaindrops() {
+            const container = document.getElementById('raindrops');
+            const raindropCount = 150;
+            
+            for (let i = 0; i < raindropCount; i++) {
+                const drop = document.createElement('div');
+                drop.classList.add('raindrop');
+                drop.style.left = Math.random() * 100 + 'vw';
+                drop.style.height = (5 + Math.random() * 25) + 'px';
+                drop.style.opacity = (0.3 + Math.random() * 0.7).toString();
+                drop.style.animationDuration = (0.5 + Math.random() * 2) + 's';
+                drop.style.transform = `rotate(${-10 + Math.random() * 20}deg)`;
+                container.appendChild(drop);
+            }
+        }
+    </script>
+</body>
+</html>
