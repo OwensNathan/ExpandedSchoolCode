@@ -312,8 +312,8 @@
             ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, width, height);
             
-            // Replace 'x' with a placeholder for evaluation
-            const cleanExpr = expr.replace(/\s/g, '');
+            // Remove whitespace from expression
+            const exprNoSpaces = expr.replace(/\s/g, '');
             
             // Calculate y values
             const points = [];
@@ -324,8 +324,9 @@
             for (let i = 0; i <= steps; i++) {
                 const x = xMin + (xMax - xMin) * (i / steps);
                 try {
-                    // Replace x in expression with actual value (using word boundary to avoid replacing x in function names)
-                    const exprWithX = cleanExpr.replace(/\bx\b/g, `(${x})`);
+                    // Replace x in expression with actual value
+                    // Use word boundary to match standalone x variable
+                    const exprWithX = exprNoSpaces.replace(/\bx\b/g, `(${x})`);
                     const y = evaluateExpression(exprWithX);
                     
                     if (isFinite(y)) {
@@ -484,6 +485,10 @@
                 try {
                     const xMin = parseFloat(document.getElementById('xMin').value);
                     const xMax = parseFloat(document.getElementById('xMax').value);
+                    
+                    if (!isFinite(xMin) || !isFinite(xMax)) {
+                        throw new Error("X Min and X Max must be valid numbers");
+                    }
                     
                     if (xMin >= xMax) {
                         throw new Error("X Min must be less than X Max");
