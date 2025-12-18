@@ -73,6 +73,7 @@ else if (currentNode == "decline_merchant")
         <p>You thank the merchant and continue on your own. The path splits again into two trails. One leads uphill, the other downhill.</p>
         <button @onclick='() => MakeChoice("uphill")' class="choice-btn">Take the uphill trail</button>
         <button @onclick='() => MakeChoice("downhill")' class="choice-btn">Take the downhill trail</button>
+        <button @onclick='() => MakeChoice("follow_stream")' class="choice-btn">Follow a nearby stream</button>
         <hr />
         <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
     </div>
@@ -115,9 +116,69 @@ else if (currentNode == "run_from_wolf")
 {
     <div>
         <h4>🏃 Retreat!</h4>
-        <p>You turn and run as fast as you can! The wolf chases you, but you manage to escape.</p>
-        <p>Unfortunately, in your panic, you get completely lost. You wander for days trying to find your way out.</p>
-        <p><strong>😞 Loss: You eventually make it home, exhausted and empty-handed.</strong></p>
+        <p>You turn and run as fast as you can! The wolf chases you briefly but gives up. You keep running until you can't hear it anymore.</p>
+        <p>When you stop to catch your breath, you realize you've run straight into a different part of the forest. You see sunlight filtering through trees ahead—it looks like the right path's sunlit clearing!</p>
+        <button @onclick='() => MakeChoice("reach_pond_tired")' class="choice-btn">Head toward the sunlight</button>
+        <button @onclick='() => MakeChoice("rest_and_regroup")' class="choice-btn">Rest here and plan your next move</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "reach_pond_tired")
+{
+    <div>
+        <h4>☀️ The Familiar Pond</h4>
+        <p>You emerge at the crystal-clear pond you would have found on the right path. But you're exhausted from running and your judgment is clouded.</p>
+        <p>In your desperate state, you forget to read the sign and rush into the water without thinking.</p>
+        <button @onclick='() => MakeChoice("swim_pond")' class="choice-btn">Swim to the center (you need that prize!)</button>
+        <button @onclick='() => MakeChoice("rest_by_pond")' class="choice-btn">Rest by the pond first</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "rest_and_regroup")
+{
+    <div>
+        <h4>🧘 Moment of Clarity</h4>
+        <p>You sit down and take deep breaths, letting your racing heart slow down. As you rest, you notice something interesting—ancient carved symbols on nearby trees.</p>
+        <p>These symbols form a trail! Someone long ago marked a path through the forest. You have enough energy to follow them now.</p>
+        <button @onclick='() => MakeChoice("follow_symbols")' class="choice-btn">Follow the ancient symbols</button>
+        <button @onclick='() => MakeChoice("ignore_symbols")' class="choice-btn">Ignore them and find your own way</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "rest_by_pond")
+{
+    <div>
+        <h4>💭 Renewed Spirit</h4>
+        <p>You rest by the pond, drinking carefully from your waterskin. As your exhaustion fades, you notice the sign: "Only the pure of heart may claim the prize."</p>
+        <p>Now that you're thinking clearly, you remember reading about this pond in old legends. The test isn't about swimming—it's about respect and patience.</p>
+        <p>You meditate by the water's edge, and the pond itself responds to your pure intentions, rising up to present you with the magical crystal!</p>
+        <p><strong>🏆 Victory! Patience and respect earned the pond's blessing!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "follow_symbols")
+{
+    <div>
+        <h4>🗿 The Ancient Path</h4>
+        <p>You follow the carved symbols from tree to tree. They lead you through safe passages, around hidden dangers, and finally to a stone monument.</p>
+        <p>At the monument, you find an inscription: "The treasure seeks those who follow wisdom." Behind the monument lies a hidden stairway leading underground.</p>
+        <p>You descend and find the treasure chamber, untouched for centuries!</p>
+        <p><strong>🏆 Victory! The ancient ones guided you true!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "ignore_symbols")
+{
+    <div>
+        <h4>🌲 Lost in the Woods</h4>
+        <p>You decide to trust your own instincts instead of following mysterious symbols. However, without a clear direction, you soon become hopelessly lost.</p>
+        <p>After wandering for hours in circles, you finally find a path that leads you out of the forest, but the treasure remains hidden.</p>
+        <p><strong>😞 Loss: Pride led you astray from the treasure's path.</strong></p>
         <button @onclick="RestartGame" class="choice-btn">Play Again</button>
         <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
     </div>
@@ -137,9 +198,139 @@ else if (currentNode == "walk_around_pond")
 {
     <div>
         <h4>🚶 The Long Way</h4>
-        <p>You decide not to disturb the pond and walk around it. The path continues through pleasant forest.</p>
-        <p>However, without the crystal's guidance, you eventually reach a dead end. The treasure remains hidden from you.</p>
-        <p><strong>😞 Loss: You return home safely but without finding the treasure.</strong></p>
+        <p>You decide not to disturb the pond and walk around it. The path continues through pleasant forest, and you come across three interesting locations.</p>
+        <p>To your left, you see smoke rising—perhaps a cabin. Straight ahead, the forest grows darker. To your right, you hear what sounds like a waterfall.</p>
+        <button @onclick='() => MakeChoice("investigate_cabin")' class="choice-btn">Head toward the smoke</button>
+        <button @onclick='() => MakeChoice("dark_forest_ahead")' class="choice-btn">Continue into the darker forest</button>
+        <button @onclick='() => MakeChoice("find_waterfall")' class="choice-btn">Follow the sound of the waterfall</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "investigate_cabin")
+{
+    <div>
+        <h4>🏠 The Hermit's Home</h4>
+        <p>You approach a small cabin. An old hermit sits on the porch, carving wood. He looks up and smiles warmly.</p>
+        <p>"Lost traveler, are you?" he asks. "I've lived in these woods for fifty years. The treasure you seek isn't far. I can tell you the way... for a price."</p>
+        <button @onclick='() => MakeChoice("pay_hermit")' class="choice-btn">Offer him your remaining gold</button>
+        <button @onclick='() => MakeChoice("ask_riddle")' class="choice-btn">Ask if you can earn the information</button>
+        <button @onclick='() => MakeChoice("decline_hermit")' class="choice-btn">Thank him and continue alone</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "dark_forest_ahead")
+{
+    <div>
+        <h4>🌑 Twilight Path</h4>
+        <p>The forest grows darker and more foreboding. Ancient trees loom overhead, blocking out the sun. You feel like you're being watched.</p>
+        <p>Suddenly, you hear a familiar growl—the dire wolf! But this time, it's surrounded by a pack. You realize you've wandered into their territory.</p>
+        <p><strong>💀 Game Over! The wolf pack was too much to handle alone.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "find_waterfall")
+{
+    <div>
+        <h4>💧 Cascading Waters</h4>
+        <p>You find a beautiful waterfall cascading down mossy rocks. The mist creates tiny rainbows in the air. Behind the waterfall, you notice a cave entrance!</p>
+        <button @onclick='() => MakeChoice("behind_waterfall")' class="choice-btn">Go behind the waterfall</button>
+        <button @onclick='() => MakeChoice("climb_waterfall")' class="choice-btn">Climb up beside the waterfall</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "pay_hermit")
+{
+    <div>
+        <h4>💰 The Deal</h4>
+        <p>You give the hermit your remaining gold. He nods appreciatively and provides you with detailed directions and a hand-drawn map.</p>
+        <p>"Follow this path exactly," he says. "Don't deviate even a single step."</p>
+        <p>Following his instructions precisely, you navigate through hidden passages and arrive at the treasure's location within hours!</p>
+        <p><strong>🏆 Victory! The hermit's knowledge was worth every coin!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "ask_riddle")
+{
+    <div>
+        <h4>🎭 The Riddle Challenge</h4>
+        <p>The hermit's eyes twinkle. "A seeker of knowledge! Very well. Answer my riddle correctly, and I'll guide you freely."</p>
+        <p>"I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?"</p>
+        <button @onclick='() => MakeChoice("answer_echo")' class="choice-btn">An echo</button>
+        <button @onclick='() => MakeChoice("answer_wind")' class="choice-btn">The wind</button>
+        <button @onclick='() => MakeChoice("answer_voice")' class="choice-btn">A voice</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "decline_hermit")
+{
+    <div>
+        <h4>🎒 Independent Journey</h4>
+        <p>You thank the hermit but decide to continue on your own path. He shrugs and returns to his carving.</p>
+        <p>You wander for hours, and eventually the sun begins to set. Without guidance, you realize you're no closer to the treasure and decide to head home.</p>
+        <p><strong>😞 Loss: Sometimes accepting help is the wiser choice.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "behind_waterfall")
+{
+    <div>
+        <h4>✨ Secret Sanctuary</h4>
+        <p>You carefully make your way behind the waterfall. The cave is beautiful, with glowing mushrooms providing soft light.</p>
+        <p>In the center of the cave, protected by the waterfall for centuries, sits the legendary treasure on a stone pedestal!</p>
+        <p><strong>🏆 Victory! The waterfall hid the greatest secret!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "climb_waterfall")
+{
+    <div>
+        <h4>🧗 The Climb</h4>
+        <p>You attempt to climb the slippery rocks beside the waterfall. The moss makes it incredibly difficult.</p>
+        <p>Your hand slips on a wet rock, and you fall into the pool below. The current is stronger than expected and pulls you downstream.</p>
+        <p>You survive but are swept far from the treasure's location, exhausted and defeated.</p>
+        <p><strong>😞 Loss: The waterfall's power was too great.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "answer_echo")
+{
+    <div>
+        <h4>🎉 Correct Answer!</h4>
+        <p>"Well done!" the hermit exclaims. "You have wisdom beyond your years. An echo indeed!"</p>
+        <p>True to his word, he provides you with excellent directions. He even gives you a special token that will help you past the final guardian.</p>
+        <p>With his help, you successfully navigate to the treasure and claim it!</p>
+        <p><strong>🏆 Victory! Wisdom opened the path to fortune!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "answer_wind")
+{
+    <div>
+        <h4>❌ Wrong Answer</h4>
+        <p>"No, no," the hermit shakes his head. "The wind has a body of sorts—moving air. Think again, but I can only give one chance."</p>
+        <p>Disappointed, you continue without his help. You wander but never find the treasure.</p>
+        <p><strong>😞 Loss: The riddle stumped you.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "answer_voice")
+{
+    <div>
+        <h4>❌ Not Quite</h4>
+        <p>"A voice requires a mouth," the hermit says gently. "Close, but not correct. I cannot help you now."</p>
+        <p>You thank him and move on, but without guidance, the treasure remains elusive.</p>
+        <p><strong>😞 Loss: So close, yet so far.</strong></p>
         <button @onclick="RestartGame" class="choice-btn">Play Again</button>
         <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
     </div>
@@ -169,10 +360,152 @@ else if (currentNode == "uphill")
 else if (currentNode == "downhill")
 {
     <div>
-        <h4>🕳️ Into the Ravine</h4>
+        <h4>🕳️ The Ravine</h4>
         <p>You take the easier downhill path. It leads to a deep ravine with a rickety rope bridge.</p>
-        <p>As you step onto the bridge, the ropes snap! You fall into the ravine below.</p>
-        <p><strong>💀 Game Over! The old bridge couldn't support your weight.</strong></p>
+        <p>The bridge looks dangerous but it's the only way across. You notice some vines along the cliff wall that might provide an alternative route.</p>
+        <button @onclick='() => MakeChoice("cross_bridge")' class="choice-btn">Carefully cross the bridge</button>
+        <button @onclick='() => MakeChoice("climb_vines")' class="choice-btn">Climb down using the vines</button>
+        <button @onclick='() => MakeChoice("explore_ravine")' class="choice-btn">Explore along the ravine edge</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "follow_stream")
+{
+    <div>
+        <h4>🌊 The Flowing Stream</h4>
+        <p>You follow the gentle stream through the forest. The water sparkles in the dappled sunlight. After a while, you hear voices ahead.</p>
+        <p>You peek through the bushes and see a group of travelers setting up camp. They seem friendly, but you're cautious.</p>
+        <button @onclick='() => MakeChoice("join_travelers")' class="choice-btn">Approach and greet the travelers</button>
+        <button @onclick='() => MakeChoice("sneak_past")' class="choice-btn">Quietly sneak past them</button>
+        <button @onclick='() => MakeChoice("observe_travelers")' class="choice-btn">Hide and observe them first</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "cross_bridge")
+{
+    <div>
+        <h4>🌉 Brave Crossing</h4>
+        <p>You test the bridge carefully with your weight. The wood creaks ominously but holds. Step by step, you make your way across.</p>
+        <p>Just as you reach the other side, a plank breaks behind you! You made it safely, though your heart is racing.</p>
+        <p>On the other side, you find an old trail marker pointing toward "Crystal Caves" and "Ancient Ruins".</p>
+        <button @onclick='() => MakeChoice("crystal_caves")' class="choice-btn">Head to the Crystal Caves</button>
+        <button @onclick='() => MakeChoice("ancient_ruins")' class="choice-btn">Explore the Ancient Ruins</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "climb_vines")
+{
+    <div>
+        <h4>🌿 The Descent</h4>
+        <p>You grab onto the thick vines and begin climbing down the cliff face. The vines are stronger than they look.</p>
+        <p>Halfway down, you discover a hidden cave entrance! Inside, you can hear the sound of dripping water—and something else moving in the darkness.</p>
+        <button @onclick='() => MakeChoice("enter_cave")' class="choice-btn">Explore the hidden cave</button>
+        <button @onclick='() => MakeChoice("continue_down")' class="choice-btn">Continue climbing down</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "explore_ravine")
+{
+    <div>
+        <h4>🏞️ The Ravine's Edge</h4>
+        <p>You walk along the ravine edge, looking for a safer passage. The path narrows dangerously, and loose rocks tumble into the depths below.</p>
+        <p>Your foot slips! You try to grab onto something, but there's nothing to hold.</p>
+        <p><strong>💀 Game Over! You fell into the ravine.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "join_travelers")
+{
+    <div>
+        <h4>👥 Fellowship Found</h4>
+        <p>You step out and greet the travelers warmly. They turn out to be experienced treasure hunters who have been searching these woods for months!</p>
+        <p>They're impressed by your courage to venture alone and invite you to join their expedition. With their knowledge and your determination, you all work together.</p>
+        <p>The group's combined skills lead you to a secret passage they'd been searching for. Inside, you find the legendary treasure!</p>
+        <p><strong>🏆 Victory! Teamwork made the dream work!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "sneak_past")
+{
+    <div>
+        <h4>🤫 Silent Steps</h4>
+        <p>You crouch low and quietly move past the camp. You're almost clear when you step on a dry branch—CRACK!</p>
+        <p>The travelers hear you! "Hey, wait!" they call out. But you're already running. In your haste, you lose your bearings and get turned around in the forest.</p>
+        <p>Hours later, you find yourself back at the stream, exhausted and no closer to the treasure.</p>
+        <p><strong>😞 Loss: You made it home safely but found nothing.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "observe_travelers")
+{
+    <div>
+        <h4>👁️ Patient Observation</h4>
+        <p>You stay hidden and watch the travelers. They're studying a map and discussing locations. You overhear them mention "the old oak tree with three trunks" as a landmark.</p>
+        <p>After they pack up and leave in another direction, you remember seeing such a tree on your journey! You head toward it with renewed purpose.</p>
+        <button @onclick='() => MakeChoice("three_trunk_oak")' class="choice-btn">Find the three-trunk oak tree</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "crystal_caves")
+{
+    <div>
+        <h4>💎 Glittering Depths</h4>
+        <p>You enter the Crystal Caves. The walls sparkle with thousands of embedded crystals, creating a breathtaking light show.</p>
+        <p>Deep in the caves, you discover that the crystals form a natural compass, pointing toward strong magical sources. Following their guidance, you navigate to a hidden chamber containing the treasure!</p>
+        <p><strong>🏆 Victory! The crystals lit your way to fortune!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "ancient_ruins")
+{
+    <div>
+        <h4>🏛️ Forgotten Temple</h4>
+        <p>You arrive at the Ancient Ruins. Crumbling stone pillars and moss-covered walls tell of a civilization long past.</p>
+        <p>As you explore, you accidentally trigger a trap! Arrows shoot from the walls, and you barely dodge them. However, one grazes your arm, and you realize too late that they were poisoned.</p>
+        <p><strong>💀 Game Over! The ancient defenses still worked after all these years.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "enter_cave")
+{
+    <div>
+        <h4>🦇 The Hidden Cave</h4>
+        <p>You carefully enter the dark cave. Your eyes adjust, and you see ancient markings on the walls. This must be an old sanctuary!</p>
+        <p>As you venture deeper, you find a small underground spring. Drinking from it clears your mind, and suddenly you can sense the treasure's location!</p>
+        <p>You follow the sensation through a series of tunnels and emerge in a sacred grove where the treasure has been protected for centuries.</p>
+        <p><strong>🏆 Victory! The sacred waters guided your path!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "continue_down")
+{
+    <div>
+        <h4>⬇️ The Long Climb</h4>
+        <p>You decide not to explore the cave and continue your descent. The climb is exhausting, and by the time you reach the bottom, you're too tired to continue safely.</p>
+        <p>You set up camp at the ravine floor for the night. In the morning, you realize you're deep in the ravine with no clear path to the treasure.</p>
+        <p><strong>😞 Loss: You survived but couldn't complete your quest.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "three_trunk_oak")
+{
+    <div>
+        <h4>🌳 The Legendary Oak</h4>
+        <p>You find the massive oak tree with three trunks twisted together. At its base, you notice fresh digging marks.</p>
+        <p>You dig carefully and discover a hidden entrance to an underground vault. Inside lies the treasure, along with a note: "To the one patient enough to listen and learn."</p>
+        <p><strong>🏆 Victory! Your patience and observation paid off!</strong></p>
         <button @onclick="RestartGame" class="choice-btn">Play Again</button>
         <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
     </div>
@@ -213,16 +546,21 @@ else if (currentNode == "downhill")
 
     private bool IsWinNode(string node)
     {
-        return node == "buy_compass" || node == "befriend_wolf" || node == "swim_pond" || node == "uphill";
+        return node == "buy_compass" || node == "befriend_wolf" || node == "swim_pond" || node == "uphill" 
+            || node == "join_travelers" || node == "crystal_caves" || node == "enter_cave" 
+            || node == "three_trunk_oak" || node == "rest_by_pond" || node == "follow_symbols"
+            || node == "pay_hermit" || node == "behind_waterfall" || node == "answer_echo";
     }
 
     private bool IsDeathNode(string node)
     {
-        return node == "rob_merchant" || node == "fight_wolf" || node == "drink_water" || node == "downhill";
+        return node == "rob_merchant" || node == "fight_wolf" || node == "drink_water" 
+            || node == "explore_ravine" || node == "ancient_ruins" || node == "dark_forest_ahead";
     }
 
     private bool IsLossNode(string node)
     {
-        return node == "run_from_wolf" || node == "walk_around_pond";
+        return node == "sneak_past" || node == "continue_down" || node == "ignore_symbols"
+            || node == "decline_hermit" || node == "climb_waterfall" || node == "answer_wind" || node == "answer_voice";
     }
 }
