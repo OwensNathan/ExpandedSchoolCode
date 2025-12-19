@@ -2250,9 +2250,115 @@ else if (currentNode == "climb_cloud_stairs")
     <div>
         <h4>☁️ Walking on Air</h4>
         <p>You tentatively step onto the cloud staircase. Amazingly, it holds your weight! Each step is soft but solid.</p>
-        <p>You climb to the floating island and find a sky palace. Inside, cloud spirits guard the treasure.</p>
-        <p>"You have faith," they say. "That is enough." They grant you access to the treasure!</p>
-        <p><strong>🏆 Victory! Faith in the impossible led you to glory!</strong></p>
+        <p>You climb higher and reach the floating island. A magnificent sky palace awaits, but you see three entrances.</p>
+        <button @onclick='() => MakeChoice("enter_main_gate")' class="choice-btn">Enter through the main gate</button>
+        <button @onclick='() => MakeChoice("side_entrance")' class="choice-btn">Try the side entrance</button>
+        <button @onclick='() => MakeChoice("wait_at_entrance")' class="choice-btn">Wait respectfully at the entrance</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "enter_main_gate")
+{
+    <div>
+        <h4>🚪 Grand Entrance</h4>
+        <p>You walk through the main gate boldly. Inside, cloud spirits guard magnificent halls.</p>
+        <p>They test your worthiness with a question: "What is lighter than a feather yet even the strongest cannot hold for long?"</p>
+        <button @onclick='() => MakeChoice("answer_breath")' class="choice-btn">Your breath</button>
+        <button @onclick='() => MakeChoice("answer_cloud")' class="choice-btn">A cloud</button>
+        <button @onclick='() => MakeChoice("answer_thought")' class="choice-btn">A thought</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "answer_breath")
+{
+    <div>
+        <h4>✅ Correct!</h4>
+        <p>"Yes!" the spirits cheer. "Breath is lighter than a feather, yet none can hold it forever."</p>
+        <p>They welcome you to the treasure chamber with full honors!</p>
+        <p><strong>🏆 Victory! Wisdom earned the spirits' trust!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "answer_cloud")
+{
+    <div>
+        <h4>❌ Incorrect</h4>
+        <p>"A cloud can be held in a jar," the spirits explain. "Try again another time."</p>
+        <p>You must leave without the treasure.</p>
+        <p><strong>😞 Loss: The riddle was tricky.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "answer_thought")
+{
+    <div>
+        <h4>❌ Not Quite</h4>
+        <p>"Thoughts can persist for years," the spirits say. "That's not the answer."</p>
+        <p>You're turned away from the treasure.</p>
+        <p><strong>😞 Loss: So close to the right answer.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "side_entrance")
+{
+    <div>
+        <h4>🚪 Humble Path</h4>
+        <p>You enter through a smaller side entrance. A single elderly spirit sits there, knitting clouds.</p>
+        <p>"Not many choose the humble path," she smiles. "What brings you here, traveler?"</p>
+        <button @onclick='() => MakeChoice("tell_truth_sky")' class="choice-btn">Tell her honestly about the treasure</button>
+        <button @onclick='() => MakeChoice("pretend_tourist")' class="choice-btn">Pretend you're just a tourist</button>
+        <button @onclick='() => MakeChoice("ask_about_her")' class="choice-btn">Ask about her and her work</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "tell_truth_sky")
+{
+    <div>
+        <h4>🗣️ Honest Heart</h4>
+        <p>"Honesty!" the spirit beams. "So rare. Come, the treasure is yours."</p>
+        <p>She leads you directly to the treasure vault. Honesty was the best policy!</p>
+        <p><strong>🏆 Victory! Truth opened the way!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "pretend_tourist")
+{
+    <div>
+        <h4>🎭 Deception Detected</h4>
+        <p>The spirit's eyes narrow. "Lies cloud the soul," she says sadly. "You must leave."</p>
+        <p>Spirits can always sense deception. You're escorted out empty-handed.</p>
+        <p><strong>😞 Loss: Lying to spirits never works.</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "ask_about_her")
+{
+    <div>
+        <h4>💬 Kind Curiosity</h4>
+        <p>The spirit is delighted by your interest! She tells you fascinating stories about cloud weaving.</p>
+        <p>"You're the first to ask about me in centuries," she says. "For that kindness, I'll show you the treasure."</p>
+        <p>She weaves you a cloud key that opens the treasure vault!</p>
+        <p><strong>🏆 Victory! Kindness and curiosity were rewarded!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "wait_at_entrance")
+{
+    <div>
+        <h4>⏰ Patient Visitor</h4>
+        <p>You wait respectfully at the entrance. After some time, a grand spirit approaches.</p>
+        <p>"Patience and respect," he nods approvingly. "You understand cloud palace etiquette."</p>
+        <p>He personally escorts you to the treasure chamber!</p>
+        <p><strong>🏆 Victory! Patience proved your worth!</strong></p>
         <button @onclick="RestartGame" class="choice-btn">Play Again</button>
         <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
     </div>
@@ -2261,10 +2367,45 @@ else if (currentNode == "call_out")
 {
     <div>
         <h4>📣 Hello Above!</h4>
-        <p>You call out to the floating island. To your surprise, a cloud spirit descends to meet you!</p>
-        <p>"Few are polite enough to announce themselves," the spirit says warmly. "Come, I will escort you."</p>
-        <p>The spirit carries you safely to the island where you find the treasure waiting!</p>
-        <p><strong>🏆 Victory! Courtesy opens doors in unexpected places!</strong></p>
+        <p>You call out to the floating island politely. Several cloud spirits descend to greet you!</p>
+        <p>They're impressed by your courtesy and offer you choices for reaching the island.</p>
+        <button @onclick='() => MakeChoice("ride_cloud_chariot")' class="choice-btn">Ride in their cloud chariot</button>
+        <button @onclick='() => MakeChoice("earn_cloud_wings")' class="choice-btn">Ask to earn cloud wings</button>
+        <button @onclick='() => MakeChoice("climb_with_help")' class="choice-btn">Climb with their guidance</button>
+        <hr />
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "ride_cloud_chariot")
+{
+    <div>
+        <h4>🌬️ Majestic Ride</h4>
+        <p>The spirits conjure a chariot made of swirling clouds. You ride in style to the floating island!</p>
+        <p>They appreciate visitors who accept their hospitality. The treasure is freely given!</p>
+        <p><strong>🏆 Victory! Accepting gracious offers brings rewards!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "earn_cloud_wings")
+{
+    <div>
+        <h4>🕊️ Trial of Flight</h4>
+        <p>You ask to earn wings rather than take the easy path. The spirits are impressed!</p>
+        <p>"Few ask to earn what we offer freely," they say. "This shows true character."</p>
+        <p>They give you permanent cloud wings AND the treasure!</p>
+        <p><strong>🏆 Victory! Choosing to earn rather than receive freely showed great character!</strong></p>
+        <button @onclick="RestartGame" class="choice-btn">Play Again</button>
+        <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
+    </div>
+}
+else if (currentNode == "climb_with_help")
+{
+    <div>
+        <h4>🤝 Guided Ascent</h4>
+        <p>With the spirits guiding and encouraging you, you climb the cloud stairs safely.</p>
+        <p>They appreciate your humility in accepting help. The treasure awaits at the top!</p>
+        <p><strong>🏆 Victory! Accepting help is a strength, not weakness!</strong></p>
         <button @onclick="RestartGame" class="choice-btn">Play Again</button>
         <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
     </div>
@@ -2715,8 +2856,8 @@ else if (currentNode == "admire_tower")
             || node == "adventure_scroll" || node == "drink_fountain" || node == "pet_unicorn"
             || node == "examine_crystals" || node == "swim_to_island" || node == "build_raft"
             || node == "search_for_boat" || node == "answer_future" || node == "use_stepping_stones"
-            || node == "pull_lever" || node == "look_for_alternative" || node == "climb_cloud_stairs"
-            || node == "call_out" || node == "join_caravan" || node == "find_shelter"
+            || node == "pull_lever" || node == "look_for_alternative"
+            || node == "join_caravan" || node == "find_shelter"
             || node == "dig_in_sand" || node == "answer_journey" || node == "answer_friends"
             || node == "answer_wisdom" || node == "ask_villagers" || node == "wait_for_thaw"
             || node == "bow_to_serpent" || node == "leave_offering" || node == "stealth_door"
@@ -2735,7 +2876,11 @@ else if (currentNode == "admire_tower")
             || node == "find_boat_underground" || node == "knock_on_door" || node == "examine_tree"
             || node == "touch_roots" || node == "cross_rope_bridge" || node == "test_bridge_first"
             || node == "decode_lantern" || node == "test_climbing_gear" || node == "follow_fireflies"
-            || node == "stay_in_tower_night" || node == "signal_lights";
+            || node == "stay_in_tower_night" || node == "signal_lights"
+            // New sky_path wins
+            || node == "answer_breath" || node == "tell_truth_sky" || node == "ask_about_her"
+            || node == "wait_at_entrance" || node == "ride_cloud_chariot" || node == "earn_cloud_wings"
+            || node == "climb_with_help";
     }
 
     private bool IsDeathNode(string node)
@@ -2763,6 +2908,8 @@ else if (currentNode == "admire_tower")
             || node == "answer_unwritten_book" || node == "climb_tower_greed"
             // New eastern_path losses
             || node == "continue_alone_valley" || node == "walk_around_lake" || node == "find_alternate_crossing"
-            || node == "catch_firefly" || node == "return_to_tower_scared";
+            || node == "catch_firefly" || node == "return_to_tower_scared"
+            // New sky_path losses
+            || node == "answer_cloud" || node == "answer_thought" || node == "pretend_tourist";
     }
 }
