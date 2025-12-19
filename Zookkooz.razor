@@ -178,6 +178,13 @@ else
         moveCount = 0;
         gemsCollected = 0;
         levelScore = 0;
+        
+        // Reset total score when starting from level 1 (beginning of new playthrough)
+        if (currentLevel == 1)
+        {
+            totalScore = 0;
+        }
+        
         levelStartTime = DateTime.Now;
         
         InitializeGrid(currentLevel);
