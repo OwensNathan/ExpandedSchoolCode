@@ -10,11 +10,11 @@
     {
         if (over) return;
         pile -= n;
-        if (pile <= 0) { msg = "You took the last token. You lose."; over = true; Engine.AddLoss(); return; }
+        if (pile <= 0) { msg = "You took the last token. You win!"; over = true; Engine.AddWin(); return; }
         int aiTake = Math.Min(3, ((pile - 1) % 4) + 1);
         msg = $"AI takes {aiTake}.";
         pile -= aiTake;
-        if (pile <= 0) { msg = "AI took last token. You win!"; over = true; Engine.AddWin(); return; }
+        if (pile <= 0) { msg = "AI took last token. You lose."; over = true; Engine.AddLoss(); return; }
         msg += $" Tokens left: {pile}";
     }
     void Reset() { pile = _random.Next(10, 50); over = false; msg = null; }
