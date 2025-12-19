@@ -2,10 +2,13 @@
 @using CombinationOfSchoolCode.Shared
 @code {
     [Parameter] public EventCallback OnExit { get; set; }
-    char[,] board = new char[6, 7];
-    string? msg; bool over;
+    private readonly char[,] board = new char[6, 7];
+    private string? msg; 
+    private bool over;
+    
     protected override void OnInitialized() => Reset();
-    void Move(int col)
+    
+    private void Move(int col)
     {
         if (over || !Drop(col, 'X')) { msg="Column full!"; return; }
         if (Win('X')) {over=true; Engine.AddWin(); msg="You win!"; return;}
@@ -14,26 +17,50 @@
         if (Win('O')) {over=true; Engine.AddLoss(); msg="AI wins!"; return;}
         if (Full()) { over=true; msg = "Draw!"; }
     }
-    bool Drop(int col, char p)
+    
+    private bool Drop(int col, char p)
     {
-        for(int i=5;i>=0;i--) if(board[i,col]==' ') {board[i,col]=p; return true;}
+        for(int i=5;i>=0;i--) 
+            if(board[i,col]==' ') 
+            {
+                board[i,col]=p; 
+                return true;
+            }
         return false;
     }
-    bool Win(char p)
+    
+    private bool Win(char p)
     {
-        for (int i=0;i<6;i++) for (int j=0;j<4;j++) if (Is(p,i,j,0,1)) return true;
-        for (int i=0;i<3;i++) for (int j=0;j<7;j++) if (Is(p,i,j,1,0)) return true;
-        for (int i=3;i<6;i++) for (int j=0;j<4;j++) if (Is(p,i,j,-1,1)) return true;
-        for (int i=3;i<6;i++) for (int j=3;j<7;j++) if (Is(p,i,j,-1,-1)) return true;
+        for (int i=0;i<6;i++) 
+            for (int j=0;j<4;j++) 
+                if (Is(p,i,j,0,1)) return true;
+        for (int i=0;i<3;i++) 
+            for (int j=0;j<7;j++) 
+                if (Is(p,i,j,1,0)) return true;
+        for (int i=3;i<6;i++) 
+            for (int j=0;j<4;j++) 
+                if (Is(p,i,j,-1,1)) return true;
+        for (int i=3;i<6;i++) 
+            for (int j=3;j<7;j++) 
+                if (Is(p,i,j,-1,-1)) return true;
         return false;
     }
-    bool Is(char p, int r, int c, int dr, int dc)
+    
+    private bool Is(char p, int r, int c, int dr, int dc)
     {
-        for (int n=0;n<4;n++) if (board[r+dr*n,c+dc*n]!=p) return false;
+        for (int n=0;n<4;n++) 
+            if (board[r+dr*n,c+dc*n]!=p) return false;
         return true;
     }
-    bool Full() { for(int i=0;i<7;i++) if (board[0,i]==' ') return false; return true; }
-    void Reset() 
+    
+    private bool Full() 
+    { 
+        for(int i=0;i<7;i++) 
+            if (board[0,i]==' ') return false; 
+        return true; 
+    }
+    
+    private void Reset() 
     { 
         for(int i=0;i<6;i++) 
             for(int j=0;j<7;j++) 

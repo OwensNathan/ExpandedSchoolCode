@@ -2,11 +2,13 @@
 @code {
     [Parameter] public EventCallback OnExit { get; set; }
     private static readonly Random _random = new();
-    int pile;
-    string? msg;
-    bool over;
+    private int pile;
+    private string? msg;
+    private bool over;
+    
     protected override void OnInitialized() => Reset();
-    void Take(int n)
+    
+    private void Take(int n)
     {
         if (over) return;
         pile -= n;
@@ -17,7 +19,13 @@
         if (pile <= 0) { msg = "AI took last token. You lose."; over = true; Engine.AddLoss(); return; }
         msg += $" Tokens left: {pile}";
     }
-    void Reset() { pile = _random.Next(10, 50); over = false; msg = null; }
+    
+    private void Reset() 
+    { 
+        pile = _random.Next(10, 50); 
+        over = false; 
+        msg = null; 
+    }
 }
 <h3>Single Pile Nim</h3>
 @if (over)

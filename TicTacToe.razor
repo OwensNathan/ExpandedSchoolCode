@@ -2,10 +2,13 @@
 @using CombinationOfSchoolCode.Shared
 @code {
     [Parameter] public EventCallback OnExit { get; set; }
-    char[,] board = new char[3, 3];
-    string? msg; bool over;
+    private readonly char[,] board = new char[3, 3];
+    private string? msg; 
+    private bool over;
+    
     protected override void OnInitialized() => Reset();
-    void Move(int r, int c)
+    
+    private void Move(int r, int c)
     {
         if (board[r, c] != ' ' || over) return;
         board[r, c] = 'X';
@@ -15,8 +18,16 @@
         if (Win('O')) { over=true; Engine.AddLoss(); msg="AI wins!"; return;}
         if (Full()) { over=true; msg = "Draw!"; }
     }
-    bool Full() { for (int i=0;i<3;i++) for(int j=0;j<3;j++) if (board[i,j]==' ') return false; return true; }
-    bool Win(char p)
+    
+    private bool Full()
+    {
+        for (int i=0;i<3;i++) 
+            for(int j=0;j<3;j++) 
+                if (board[i,j]==' ') return false; 
+        return true;
+    }
+    
+    private bool Win(char p)
     {
         for (int i=0;i<3;i++)
             if ((board[i,0]==p && board[i,1]==p && board[i,2]==p) ||
@@ -24,7 +35,15 @@
                 return true;
         return (board[0,0]==p && board[1,1]==p && board[2,2]==p) || (board[2,0]==p && board[1,1]==p && board[0,2]==p);
     }
-    void Reset() { for (int i=0; i<3; i++) for (int j=0; j<3; j++) board[i,j]=' '; over=false; msg=null; }
+    
+    private void Reset() 
+    { 
+        for (int i=0; i<3; i++) 
+            for (int j=0; j<3; j++) 
+                board[i,j]=' '; 
+        over=false; 
+        msg=null; 
+    }
 }
 <h3>Tic-Tac-Toe</h3>
 @if (over)

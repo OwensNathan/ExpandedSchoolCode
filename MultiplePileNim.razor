@@ -2,10 +2,13 @@
 @code {
     [Parameter] public EventCallback OnExit { get; set; }
     private static readonly Random _random = new();
-    int[] piles = new int[3];
-    string? msg; bool over;
+    private int[] piles = new int[3];
+    private string? msg; 
+    private bool over;
+    
     protected override void OnInitialized() => Reset();
-    void Take(int pileIndex, int n)
+    
+    private void Take(int pileIndex, int n)
     {
         if (over || piles[pileIndex] < n) return;
         piles[pileIndex] -= n;
@@ -18,7 +21,13 @@
         if (piles.Sum() <= 0) { msg = "AI took last token. You lose."; over=true; Engine.AddLoss(); return; }
         msg += $" Piles: [{string.Join(", ", piles)}]";
     }
-    void Reset() { piles = new[] { _random.Next(10, 20), _random.Next(10, 20), _random.Next(10, 20) }; over = false; msg = null; }
+    
+    private void Reset() 
+    { 
+        piles = new[] { _random.Next(10, 20), _random.Next(10, 20), _random.Next(10, 20) }; 
+        over = false; 
+        msg = null; 
+    }
 }
 <h3>Multiple Pile Nim</h3>
 @if (over)
