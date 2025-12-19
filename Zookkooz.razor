@@ -8,7 +8,11 @@
 {
     <div>
         <p>Welcome to Zookkooz! Navigate through the dungeon, collect all gems (💎), avoid enemies (👾), and reach the exit (🚪)!</p>
-        <p><strong>Current Level:</strong> @currentLevel / @totalLevels</p>
+        <p><strong>Current Level:</strong> @currentLevel / @totalLevels @GetLevelDifficulty()</p>
+        @if (totalScore > 0)
+        {
+            <p><strong>Current Total Score:</strong> @totalScore</p>
+        }
         <p><strong>Controls:</strong> Use W/A/S/D or Arrow keys to move</p>
         <p><strong>Legend:</strong></p>
         <ul>
@@ -19,6 +23,26 @@
             <li>🧱 - Walls (can't pass through)</li>
             <li>⬜ - Empty space (walkable path)</li>
         </ul>
+        <p><strong>Scoring:</strong></p>
+        <ul>
+            <li>@PointsPerGem points per gem collected</li>
+            <li>@BonusPerLevel points level completion bonus</li>
+            <li>Time bonus: Complete under 60 seconds for extra points!</li>
+            <li>Move bonus: Complete under 50 moves for extra points!</li>
+        </ul>
+        <details>
+            <summary><strong>Level Previews</strong></summary>
+            <ul>
+                <li><strong>Level 1:</strong> Introduction - Simple maze with 3 enemies</li>
+                <li><strong>Level 2:</strong> Maze Runner - More complex paths with 4 enemies</li>
+                <li><strong>Level 3:</strong> Spiral Challenge - Navigate the spiral with 5 enemies</li>
+                <li><strong>Level 4:</strong> The Gauntlet - Narrow corridors with 6 enemies</li>
+                <li><strong>Level 5:</strong> The Fortress - Dense walls with 7 enemies guarding</li>
+                <li><strong>Level 6:</strong> The Labyrinth - Complex maze with 8 enemies patrolling</li>
+                <li><strong>Level 7:</strong> Crossroads - Multiple paths with 9 enemies at intersections</li>
+                <li><strong>Level 8:</strong> Ultimate Challenge - Master level with 10 enemies!</li>
+            </ul>
+        </details>
         <button @onclick="StartGame">Start Level @currentLevel</button>
         @if (currentLevel > 1)
         {
@@ -30,16 +54,20 @@
 else if (gameOver)
 {
     <div>
-        <h4>@gameMessage</h4>
+        <h4 style="white-space: pre-line;">@gameMessage</h4>
         <p>Gems Collected: @gemsCollected / @totalGems</p>
-        <button @onclick="StartGame">Play Again</button>
+        <button @onclick="StartGame">@(currentLevel > 1 ? "Continue" : "Play Again")</button>
+        @if (currentLevel > 1)
+        {
+            <button @onclick="ResetToLevel1">Restart from Level 1</button>
+        }
         <button @onclick="OnExit.InvokeAsync">Back to Menu</button>
     </div>
 }
 else
 {
     <div>
-        <p>Level @currentLevel / @totalLevels | Gems: @gemsCollected / @totalGems | Moves: @moveCount</p>
+        <p>Level @currentLevel / @totalLevels | Gems: @gemsCollected / @totalGems | Moves: @moveCount | Score: @totalScore</p>
         <div style="font-family: monospace; line-height: 1.2; font-size: 24px;">
             @for (int row = 0; row < gridHeight; row++)
             {
@@ -64,6 +92,9 @@ else
     private string gameMessage = "";
     private string statusMessage = "";
     private int moveCount = 0;
+    private int totalScore = 0;
+    private int levelScore = 0;
+    private DateTime levelStartTime;
 
     private const int gridWidth = 15;
     private const int gridHeight = 10;
@@ -78,13 +109,19 @@ else
     private int totalGems = 0;
     
     private int currentLevel = 1;
-    private const int totalLevels = 4;
+    private const int totalLevels = 8;
     
     private List<(int row, int col)> enemies = new List<(int, int)>();
     private DotNetObjectReference<Zookkooz>? dotNetReference;
     private string listenerId = Guid.NewGuid().ToString();
     
     private const int MaxKeyLength = 20;
+    
+    // Scoring constants
+    private const int PointsPerGem = 100;
+    private const int BonusPerLevel = 500;
+    private const int TimeBonus = 10; // Points per second remaining under 60 seconds
+    private const int MoveBonus = 5;  // Points saved per move under 50 moves
 
     public void Dispose()
     {
@@ -140,6 +177,8 @@ else
         statusMessage = $"Level {currentLevel}: Collect all gems to unlock the exit!";
         moveCount = 0;
         gemsCollected = 0;
+        levelScore = 0;
+        levelStartTime = DateTime.Now;
         
         InitializeGrid(currentLevel);
         StateHasChanged();
@@ -153,6 +192,7 @@ else
     private void ResetToLevel1()
     {
         currentLevel = 1;
+        totalScore = 0;
         StateHasChanged();
     }
 
@@ -206,6 +246,18 @@ else
                 break;
             case 4:
                 InitializeLevel4();
+                break;
+            case 5:
+                InitializeLevel5();
+                break;
+            case 6:
+                InitializeLevel6();
+                break;
+            case 7:
+                InitializeLevel7();
+                break;
+            case 8:
+                InitializeLevel8();
                 break;
         }
     }
@@ -415,6 +467,297 @@ else
         }
     }
 
+    private void InitializeLevel5()
+    {
+        // Level 5: The Fortress - Dense walls with tight passages
+        // Create fortress-like structure
+        for (int r = 2; r < 8; r++)
+        {
+            for (int c = 2; c < 13; c++)
+            {
+                if (r == 2 || r == 7 || c == 2 || c == 12)
+                {
+                    grid[r, c] = '#';
+                }
+            }
+        }
+        // Create openings
+        grid[2, 7] = ' ';  // Top entrance
+        grid[7, 4] = ' ';  // Bottom left
+        grid[7, 10] = ' '; // Bottom right
+        grid[4, 2] = ' ';  // Left entrance
+        
+        // Inner walls
+        for (int r = 3; r < 7; r++)
+        {
+            grid[r, 7] = '#';
+        }
+        grid[5, 7] = ' '; // Center opening
+        
+        for (int c = 4; c < 11; c++)
+        {
+            if (c != 7)
+            {
+                grid[4, c] = '#';
+            }
+        }
+
+        // Place gems in fortress corners and center
+        int[] gemPositions = { 3, 3, 3, 11, 6, 3, 6, 11, 1, 7, 3, 7, 6, 7, 8, 4, 8, 10 };
+        for (int i = 0; i < gemPositions.Length; i += 2)
+        {
+            if (grid[gemPositions[i], gemPositions[i + 1]] == ' ')
+            {
+                grid[gemPositions[i], gemPositions[i + 1]] = 'G';
+                totalGems++;
+            }
+        }
+
+        // Place enemies (7 enemies - fortress guards!)
+        enemies.Add((3, 5));
+        enemies.Add((3, 9));
+        enemies.Add((5, 4));
+        enemies.Add((5, 10));
+        enemies.Add((6, 7));
+        enemies.Add((8, 6));
+        enemies.Add((8, 8));
+        foreach (var enemy in enemies)
+        {
+            if (grid[enemy.row, enemy.col] == ' ')
+            {
+                grid[enemy.row, enemy.col] = 'M';
+            }
+        }
+    }
+
+    private void InitializeLevel6()
+    {
+        // Level 6: The Labyrinth - Complex maze with dead ends
+        // Create intricate maze pattern
+        for (int c = 3; c < 12; c += 2)
+        {
+            for (int r = 1; r < 8; r++)
+            {
+                grid[r, c] = '#';
+            }
+        }
+        // Create horizontal passages
+        for (int r = 2; r < 8; r += 2)
+        {
+            for (int c = 2; c < 13; c++)
+            {
+                if (grid[r, c] == '#')
+                {
+                    grid[r, c] = ' ';
+                }
+            }
+        }
+        // Create openings for solution path
+        grid[1, 5] = ' ';
+        grid[3, 3] = ' ';
+        grid[3, 7] = ' ';
+        grid[5, 9] = ' ';
+        grid[7, 5] = ' ';
+        grid[7, 11] = ' ';
+        
+        // Add some random blocking walls
+        grid[2, 5] = '#';
+        grid[2, 9] = '#';
+        grid[4, 4] = '#';
+        grid[4, 8] = '#';
+        grid[6, 6] = '#';
+        grid[6, 10] = '#';
+
+        // Place gems throughout maze
+        int[] gemPositions = { 1, 3, 2, 8, 3, 5, 4, 11, 5, 2, 6, 8, 7, 4, 8, 9, 8, 13 };
+        for (int i = 0; i < gemPositions.Length; i += 2)
+        {
+            if (grid[gemPositions[i], gemPositions[i + 1]] == ' ')
+            {
+                grid[gemPositions[i], gemPositions[i + 1]] = 'G';
+                totalGems++;
+            }
+        }
+
+        // Place enemies (8 enemies - patrolling the maze!)
+        enemies.Add((1, 7));
+        enemies.Add((2, 3));
+        enemies.Add((3, 10));
+        enemies.Add((4, 6));
+        enemies.Add((5, 12));
+        enemies.Add((6, 3));
+        enemies.Add((7, 8));
+        enemies.Add((8, 11));
+        foreach (var enemy in enemies)
+        {
+            if (grid[enemy.row, enemy.col] == ' ')
+            {
+                grid[enemy.row, enemy.col] = 'M';
+            }
+        }
+    }
+
+    private void InitializeLevel7()
+    {
+        // Level 7: The Crossroads - Multiple intersecting paths
+        // Create cross-shaped main paths
+        for (int r = 1; r < 9; r++)
+        {
+            grid[r, 7] = ' ';
+        }
+        for (int c = 1; c < 14; c++)
+        {
+            grid[4, c] = ' ';
+        }
+        
+        // Add diagonal barriers
+        for (int i = 0; i < 4; i++)
+        {
+            grid[2 + i, 3 + i] = '#';
+            grid[2 + i, 11 - i] = '#';
+            grid[6 - i, 3 + i] = '#';
+            grid[6 - i, 11 - i] = '#';
+        }
+        
+        // Add additional obstacle walls
+        grid[1, 2] = '#';
+        grid[1, 3] = '#';
+        grid[1, 11] = '#';
+        grid[1, 12] = '#';
+        grid[8, 2] = '#';
+        grid[8, 3] = '#';
+        grid[8, 11] = '#';
+        grid[8, 12] = '#';
+        
+        // Narrow passages in corners
+        for (int r = 2; r < 4; r++)
+        {
+            grid[r, 1] = '#';
+            grid[r, 13] = '#';
+        }
+        for (int r = 6; r < 8; r++)
+        {
+            grid[r, 1] = '#';
+            grid[r, 13] = '#';
+        }
+
+        // Place gems at strategic crossroads
+        int[] gemPositions = { 1, 7, 2, 2, 2, 12, 4, 1, 4, 7, 4, 13, 6, 2, 6, 12, 8, 7, 7, 5, 7, 9 };
+        for (int i = 0; i < gemPositions.Length; i += 2)
+        {
+            if (grid[gemPositions[i], gemPositions[i + 1]] == ' ')
+            {
+                grid[gemPositions[i], gemPositions[i + 1]] = 'G';
+                totalGems++;
+            }
+        }
+
+        // Place enemies (9 enemies - guarding intersections!)
+        enemies.Add((2, 7));
+        enemies.Add((4, 4));
+        enemies.Add((4, 10));
+        enemies.Add((6, 7));
+        enemies.Add((3, 2));
+        enemies.Add((3, 12));
+        enemies.Add((5, 2));
+        enemies.Add((5, 12));
+        enemies.Add((7, 7));
+        foreach (var enemy in enemies)
+        {
+            if (grid[enemy.row, enemy.col] == ' ')
+            {
+                grid[enemy.row, enemy.col] = 'M';
+            }
+        }
+    }
+
+    private void InitializeLevel8()
+    {
+        // Level 8: The Ultimate Challenge - Master level!
+        // Create extremely complex layout with multiple chambers
+        
+        // Outer ring
+        for (int c = 2; c < 13; c++)
+        {
+            grid[1, c] = '#';
+            grid[8, c] = '#';
+        }
+        for (int r = 1; r < 9; r++)
+        {
+            grid[r, 2] = '#';
+            grid[r, 12] = '#';
+        }
+        // Openings in outer ring
+        grid[1, 7] = ' ';
+        grid[8, 7] = ' ';
+        grid[4, 2] = ' ';
+        grid[4, 12] = ' ';
+        
+        // Inner chambers
+        for (int r = 3; r < 7; r++)
+        {
+            grid[r, 5] = '#';
+            grid[r, 9] = '#';
+        }
+        grid[4, 5] = ' ';
+        grid[4, 9] = ' ';
+        
+        for (int c = 5; c < 10; c++)
+        {
+            if (c != 7)
+            {
+                grid[3, c] = '#';
+                grid[6, c] = '#';
+            }
+        }
+        
+        // Center obstacles
+        grid[4, 7] = '#';
+        grid[5, 6] = '#';
+        grid[5, 8] = '#';
+        
+        // Additional challenging barriers
+        grid[2, 4] = '#';
+        grid[2, 10] = '#';
+        grid[7, 4] = '#';
+        grid[7, 10] = '#';
+        grid[3, 3] = '#';
+        grid[3, 11] = '#';
+        grid[6, 3] = '#';
+        grid[6, 11] = '#';
+
+        // Place gems everywhere - must collect all!
+        int[] gemPositions = { 1, 4, 1, 10, 2, 2, 2, 7, 2, 12, 3, 4, 3, 10, 4, 3, 4, 11, 
+                               5, 3, 5, 7, 5, 11, 6, 4, 6, 10, 7, 2, 7, 7, 7, 12, 8, 4, 8, 10 };
+        for (int i = 0; i < gemPositions.Length; i += 2)
+        {
+            if (grid[gemPositions[i], gemPositions[i + 1]] == ' ')
+            {
+                grid[gemPositions[i], gemPositions[i + 1]] = 'G';
+                totalGems++;
+            }
+        }
+
+        // Place enemies (10 enemies - the final gauntlet!)
+        enemies.Add((2, 5));
+        enemies.Add((2, 9));
+        enemies.Add((3, 7));
+        enemies.Add((4, 4));
+        enemies.Add((4, 10));
+        enemies.Add((5, 5));
+        enemies.Add((5, 9));
+        enemies.Add((6, 7));
+        enemies.Add((7, 5));
+        enemies.Add((7, 9));
+        foreach (var enemy in enemies)
+        {
+            if (grid[enemy.row, enemy.col] == ' ')
+            {
+                grid[enemy.row, enemy.col] = 'M';
+            }
+        }
+    }
+
     private void TryMove(int newRow, int newCol)
     {
         // Check bounds
@@ -458,12 +801,24 @@ else
             if (gemsCollected >= totalGems)
             {
                 int totalMoves = moveCount + 1;
+                
+                // Calculate level score
+                int baseScore = gemsCollected * PointsPerGem + BonusPerLevel;
+                int timeTaken = (int)(DateTime.Now - levelStartTime).TotalSeconds;
+                int timeBonus = timeTaken < 60 ? (60 - timeTaken) * TimeBonus : 0;
+                int moveBonus = totalMoves < 50 ? (50 - totalMoves) * MoveBonus : 0;
+                levelScore = baseScore + timeBonus + moveBonus;
+                totalScore += levelScore;
+                
                 if (currentLevel < totalLevels)
                 {
                     // Progress to next level
                     currentLevel++;
                     gameOver = true;
-                    gameMessage = $"🎉 Level {currentLevel - 1} Complete! {totalMoves} moves. Ready for Level {currentLevel}?";
+                    gameMessage = $"🎉 Level {currentLevel - 1} Complete!\n" +
+                                  $"Moves: {totalMoves} | Level Score: {levelScore}\n" +
+                                  $"Total Score: {totalScore}\n" +
+                                  $"Ready for Level {currentLevel}?";
                     StateHasChanged();
                     return;
                 }
@@ -471,7 +826,11 @@ else
                 {
                     // Won the entire game!
                     gameOver = true;
-                    gameMessage = $"🏆 GAME COMPLETE! You conquered all {totalLevels} levels in {totalMoves} moves! You're a Zookkooz master!";
+                    gameMessage = $"🏆 GAME COMPLETE!\n" +
+                                  $"You conquered all {totalLevels} levels!\n" +
+                                  $"Total Moves: {totalMoves}\n" +
+                                  $"Final Score: {totalScore}\n" +
+                                  $"You're a Zookkooz master!";
                     Engine.AddWin();
                     currentLevel = 1; // Reset for next play
                     StateHasChanged();
@@ -508,6 +867,22 @@ else
             'M' => "👾",
             'E' => "🚪",
             _ => "⬜"
+        };
+    }
+    
+    private string GetLevelDifficulty()
+    {
+        return currentLevel switch
+        {
+            1 => "- Easy",
+            2 => "- Easy",
+            3 => "- Medium",
+            4 => "- Medium",
+            5 => "- Hard",
+            6 => "- Hard",
+            7 => "- Very Hard",
+            8 => "- Extreme!",
+            _ => ""
         };
     }
 }
