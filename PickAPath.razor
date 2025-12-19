@@ -199,10 +199,10 @@ else if (currentNode == "walk_around_pond")
     <div>
         <h4>🚶 The Long Way</h4>
         <p>You decide not to disturb the pond and walk around it. The path continues through pleasant forest, and you come across several interesting locations.</p>
-        <p>To your left, you see smoke rising—perhaps a cabin. Straight ahead, the forest grows darker. To your right, you hear what sounds like a waterfall. Behind you, you notice a mystical glade glowing faintly.</p>
-        <button @onclick='() => MakeChoice("investigate_cabin")' class="choice-btn">Head toward the smoke</button>
-        <button @onclick='() => MakeChoice("dark_forest_ahead")' class="choice-btn">Continue into the darker forest</button>
-        <button @onclick='() => MakeChoice("find_waterfall")' class="choice-btn">Follow the sound of the waterfall</button>
+        <p>To your left, you see smoke rising—perhaps a cabin. Straight ahead, the forest grows darker. To your right, you hear what sounds like a waterfall. You also notice a mystical glade glowing nearby.</p>
+        <button @onclick='() => MakeChoice("investigate_cabin")' class="choice-btn">Head toward the smoke (left)</button>
+        <button @onclick='() => MakeChoice("dark_forest_ahead")' class="choice-btn">Continue into the darker forest (ahead)</button>
+        <button @onclick='() => MakeChoice("find_waterfall")' class="choice-btn">Follow the sound of the waterfall (right)</button>
         <button @onclick='() => MakeChoice("mystical_glade")' class="choice-btn">Explore the mystical glade</button>
         <hr />
         <button @onclick="OnExit.InvokeAsync">Back to Menu</button>

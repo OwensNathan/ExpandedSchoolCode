@@ -457,12 +457,13 @@ else
         {
             if (gemsCollected >= totalGems)
             {
+                int totalMoves = moveCount + 1;
                 if (currentLevel < totalLevels)
                 {
                     // Progress to next level
                     currentLevel++;
                     gameOver = true;
-                    gameMessage = $"🎉 Level {currentLevel - 1} Complete! {moveCount + 1} moves. Ready for Level {currentLevel}?";
+                    gameMessage = $"🎉 Level {currentLevel - 1} Complete! {totalMoves} moves. Ready for Level {currentLevel}?";
                     StateHasChanged();
                     return;
                 }
@@ -470,7 +471,7 @@ else
                 {
                     // Won the entire game!
                     gameOver = true;
-                    gameMessage = $"🏆 GAME COMPLETE! You conquered all {totalLevels} levels in {moveCount + 1} moves! You're a Zookkooz master!";
+                    gameMessage = $"🏆 GAME COMPLETE! You conquered all {totalLevels} levels in {totalMoves} moves! You're a Zookkooz master!";
                     Engine.AddWin();
                     currentLevel = 1; // Reset for next play
                     StateHasChanged();
