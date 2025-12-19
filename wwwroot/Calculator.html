@@ -206,6 +206,25 @@
             return evaluateTokens(tokenize(expr));
         }
 
+        // Special evaluator for graphing that doesn't apply digit-to-digit implicit multiplication
+        function evaluateGraphExpression(expr) {
+            expr = expr.replace(/\s/g, '');
+
+            // Only apply implicit multiplication for:
+            // 1. Number or ')' followed by '('
+            expr = expr.replace(/(\d|\))(\()/g, '$1*$2');
+            // 2. ')' followed by number
+            expr = expr.replace(/(\))(\d)/g, '$1*$2');
+            // Note: We do NOT apply number-to-number implicit multiplication here
+            // because the x values are already complete numbers
+
+            if (/[^0-9+\-*\/^().]/.test(expr)) {
+                throw new Error("Invalid characters in expression");
+            }
+
+            return evaluateTokens(tokenize(expr));
+        }
+
         function tokenize(expr) {
             const tokens = [];
             let number = '';
@@ -325,9 +344,13 @@
                 const x = xMin + (xMax - xMin) * (i / steps);
                 try {
                     // Replace x in expression with actual value
-                    // Use word boundary to match standalone x variable
-                    const exprWithX = exprNoSpaces.replace(/\bx\b/g, `(${x})`);
-                    const y = evaluateExpression(exprWithX);
+                    // Wrap in parentheses to handle negative numbers and preserve multi-digit numbers
+                    // Use a temporary placeholder to avoid implicit multiplication issues
+                    const xValue = x.toString();
+                    const exprWithX = exprNoSpaces.replace(/\bx\b/g, `(${xValue})`);
+                    
+                    // Create a special evaluator for graphing that doesn't break multi-digit numbers
+                    const y = evaluateGraphExpression(exprWithX);
                     
                     if (isFinite(y)) {
                         points.push({ x, y });
